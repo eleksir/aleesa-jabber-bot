@@ -1,0 +1,14 @@
+requires 'Cwd::utf8';
+requires 'DB_File';
+requires 'Digest::MD5';
+requires 'File::Basename';
+requires 'File::Path';
+requires 'HTTP::Tiny';
+requires 'Hailo';
+requires 'JSON';
+requires 'JSON::XS';
+requires 'JSON::PP';
+requires 'Net::Jabber::Bot';
+requires 'POSIX';
+requires 'URI::URL';
+requires 'local::lib';

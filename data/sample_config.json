@@ -1,0 +1,24 @@
+{
+    "user" : "nobody",
+    "jabberbot": {
+# maybe onece it will be multi-instance of bot
+        "aleesa" : {
+            "state" : "enabled",
+            "host" : "jabber.ru",
+            "confsrv": "conference.jabber.ru",
+# sadly, but for now we can serve only one room
+            "room" : "mychatroom",
+            "authname" : "mybot",
+            "mucname" : "mybot",
+            "password": "mypassword",
+            "brain": "data/aleesa.jabber.sqlite",
+            "csign": "!"
+        },
+    },
+    "openweathermap" : {
+        "cachetime": "data/cache/openweathermap.Id-Timestamp.db",
+        "cachedata": "data/cache/openweathermap.Id-Data.db",
+        "appid": "get_it_on_openweathermap.org"
+    },
+    "debug_log" : "/var/log/aleesa-telegram-bot/debug.log"
+}

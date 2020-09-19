@@ -1,0 +1,114 @@
+#!/usr/bin/perl
+
+use 5.018;
+use strict;
+use warnings "all";
+use utf8;
+use open qw(:std :utf8);
+
+my $workdir;
+
+# before we run, change working dir
+BEGIN {
+	use Cwd qw(chdir abs_path);
+	my @CWD = split (/\//, abs_path ($0));
+	if ($#CWD > 1) { $#CWD = $#CWD - 2; }
+	$workdir = join ('/', @CWD);
+	chdir ($workdir);
+}
+
+use lib ("$workdir/lib", "$workdir/vendor_perl", "$workdir/vendor_perl/lib/perl5");
+no Cwd;
+use Cwd::utf8 qw(chdir abs_path);
+use POSIX qw(setgid setuid setsid);
+use File::Path qw(make_path);
+use File::Basename qw(basename dirname);
+use conf qw(loadConf);
+use botlib qw(logger);
+use jabberbot qw(run_jabberbot);
+
+sub daemonize ();
+sub __fork ();
+
+$| = 1;
+my $runAsUid = $<;
+
+my $piddir = "/var/run/" . basename (abs_path ($0));
+my $C = loadConf ();
+
+# if we run under root, create pid dir and set correct owner for it, same for debug log if it is defined
+if ($< == 0) {
+	my $user = $C->{user};
+	die "Unable to run as root, please define unprivileged user in config.json\n" unless (defined ($user));
+	my ($uid, $gid) = (getpwnam ($user))[2,3];
+
+	unless (-d $piddir) {
+		make_path (
+			$piddir, {
+				uid   => $uid,
+				group => $gid
+			}
+		);
+	}
+
+	if ($C->{'debug_log'}) {
+		unless (-d dirname($C->{'debug_log'})) {
+			make_path (
+				dirname($C->{'debug_log'}), {
+					uid   => $uid,
+					group => $gid
+				}
+			);
+		}
+	}
+
+# drop privs
+	setgid ($gid) or die "Unable to switch to group of $user($!)\n";
+	setuid ($uid) or die "Unable to switch to account $user($!)\n";
+} else {
+	$piddir = $workdir;
+}
+
+# double fork attach to /dev/null all stdio and go background
+daemonize ();
+
+# write pidfile
+my $apath = abs_path ($0);
+
+unless (defined($apath)) {
+	logger ("Unable to get abs_path: $!");
+	die "Unable to get abs_path: $!\n";
+};
+
+my $pidfile = sprintf ("%s/%s.pid", $piddir, basename ($apath));
+logger ("Creating pidfile at $pidfile");
+open (PID, ">", $pidfile) or die "Error opening $pidfile: $!\n";
+print PID $$ or die "Error writing to $pidfile: $!\n";
+close PID;
+
+# set correct proctitle
+$0 = abs_path ($0);
+
+# run bot, at last
+run_jabberbot ();
+unlink ($pidfile) if (-f $pidfile);
+exit 0;
+
+sub daemonize () {
+	__fork ();
+	POSIX::setsid ();
+	open (STDIN, "<", "/dev/null");
+	open (STDOUT, ">", "/dev/null");
+	open (STDERR, ">", "/dev/null");
+	__fork ();
+	umask 0;
+}
+
+sub __fork () {
+	my $pid = fork;
+	die "Can't fork: $!\n" unless (defined ($pid));
+	exit if ($pid != 0);
+}
+
+__END__
+# vim: set ft=perl noet ai ts=4 sw=4 sts=4:

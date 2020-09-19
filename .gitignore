@@ -1,0 +1,4 @@
+vendor_perl/**
+data/config.json
+data/*.sqlite
+data/cache
