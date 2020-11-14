@@ -38,7 +38,6 @@ sub __background_checks {
 sub __new_bot_message {
 	my %hash = @_;
 	my $bot = $hash{bot_object};
-#	my $text = encode('utf-8', $hash{body});
 	my $text = $hash{body};
 
 	if ($hash{'type'} eq 'groupchat') {
@@ -49,14 +48,12 @@ sub __new_bot_message {
 		if ($text =~ /^$qname$/) {
 			$bot->SendGroupMessage($hash{'reply_to'}, 'Чего тебе?');
 		} elsif ($text =~ /^$qname[\,|\:]? (.+)/) {
-#			$bot->SendGroupMessage($hash{'reply_to'}, $hailo->learn_reply(decode('utf-8', $1)));
 			$bot->SendGroupMessage($hash{'reply_to'}, $hailo->learn_reply($1));
 		} elsif ($text eq "$c->{jabberbot}->{aleesa}->{csign}пинг") {
 			$bot->SendGroupMessage($hash{'reply_to'}, 'Понг.');
 		} elsif ($text eq "$c->{jabberbot}->{aleesa}->{csign}ping") {
 			$bot->SendGroupMessage($hash{'reply_to'}, 'Pong.');
 		} elsif (substr($text, 0, 1) eq $c->{jabberbot}->{aleesa}->{csign}) {
-#			$text = decode('utf-8', $text);
 
 			if (substr($text, 1, 3) eq 'rum') {
 				eval {
@@ -100,7 +97,7 @@ sub __new_bot_message {
 						"/me наливает абсент в стопку. Смочив кубик сахара в абсенте кладёт его на дырявую ложечку и пожигает. Как только пламя потухнет, $c->{jabberbot}->{aleesa}->{mucname} размешивает оплавившийся кубик в абсенте и подносит стопку " .(split(/\//,$hash{from_full}))[1] . '.'
 					);
 				};
-			} elsif ((substr($text, 1, 2) eq 'w ') || (substr($text, 1, 2) eq 'п ')) {
+			} elsif (substr($text, 1, 2) eq 'w '  ||  substr($text, 1, 2) eq 'п ') {
 				my $city = substr($text, 2);
 
 				eval {
@@ -109,12 +106,24 @@ sub __new_bot_message {
 						weather($city) =~ tr/\n/ /r
 					);
 				};
+			} elsif ((length($text) == 8 && substr($text, 1, 8) eq 'version')  ||  (length ($text) == 4 && substr($text, 1, 4) eq 'ver')) {
+				$bot->SendGroupMessage($hash{'reply_to'}, 'Версия нуль.чего-то_там.чего-то_там');
+			} elsif ((length ($text) == 5 && substr($text, 1, 5) eq 'help')  ||  (length ($text) == 7 && substr($text, 1, 7) eq 'помощь')) {
+				my $rate = $bot->message_delay();
+				# rate limit this :) specially for jabber.ru
+				$bot->message_delay($rate * 5);
+				$bot->SendGroupMessage($hash{'reply_to'}, "!help | !помощь - это сообщение");
+				$bot->SendGroupMessage($hash{'reply_to'}, "!w город | !п город - погода в городе");
+				$bot->SendGroupMessage($hash{'reply_to'}, "!ping | !пинг - попинговать бота");
+				$bot->SendGroupMessage($hash{'reply_to'}, "!some_brew - выдать соответсвующий напиток, на донный момент бармен умеет выдать rum, vodka, beer, tequila, whisky, absinthe");
+				$bot->SendGroupMessage($hash{'reply_to'}, "!ver|version - написать что-то про версию ПО");
+				$bot->message_delay($rate);
 			} else {
-				#$hailo->learn($text);
+				$hailo->learn($text);
 				return;
 			}
 		} else {
-			#$hailo->learn($text);
+			$hailo->learn($text);
 			return;
 		}
 	} elsif ($hash{'type'} eq 'chat') {
@@ -129,7 +138,7 @@ sub __new_bot_message {
 sub run_jabberbot {
 	$hailo = Hailo->new(
 		brain => $c->{jabberbot}->{aleesa}->{brain},
-		order => 3
+		order => 2
 	);
 
 	my %conflist = ();
