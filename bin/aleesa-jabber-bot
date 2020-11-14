@@ -2,16 +2,19 @@
 
 use 5.018;
 use strict;
-use warnings "all";
+use warnings;
 use utf8;
 use open qw(:std :utf8);
+use English qw( -no_match_vars );
+
+use version; our $VERSION = qw(1.0);
 
 my $workdir;
 
 # before we run, change working dir
 BEGIN {
 	use Cwd qw(chdir abs_path);
-	my @CWD = split (/\//, abs_path ($0));
+	my @CWD = split (/\//, abs_path ($PROGRAM_NAME));
 	if ($#CWD > 1) { $#CWD = $#CWD - 2; }
 	$workdir = join ('/', @CWD);
 	chdir ($workdir);
@@ -30,14 +33,14 @@ use jabberbot qw(run_jabberbot);
 sub daemonize ();
 sub __fork ();
 
-$| = 1;
-my $runAsUid = $<;
+local $OUTPUT_AUTOFLUSH = 1;
+my $runAsUid = $UID;
 
-my $piddir = "/var/run/" . basename (abs_path ($0));
+my $piddir = '/var/run/' . basename (abs_path ($PROGRAM_NAME));
 my $C = loadConf ();
 
 # if we run under root, create pid dir and set correct owner for it, same for debug log if it is defined
-if ($< == 0) {
+if ($UID == 0) {
 	my $user = $C->{user};
 	die "Unable to run as root, please define unprivileged user in config.json\n" unless (defined ($user));
 	my ($uid, $gid) = (getpwnam ($user))[2,3];
@@ -63,8 +66,8 @@ if ($< == 0) {
 	}
 
 # drop privs
-	setgid ($gid) or die "Unable to switch to group of $user($!)\n";
-	setuid ($uid) or die "Unable to switch to account $user($!)\n";
+	setgid ($gid) or die "Unable to switch to group of $user($OS_ERROR)\n";
+	setuid ($uid) or die "Unable to switch to account $user($OS_ERROR)\n";
 } else {
 	$piddir = $workdir;
 }
@@ -73,21 +76,21 @@ if ($< == 0) {
 daemonize ();
 
 # write pidfile
-my $apath = abs_path ($0);
+my $apath = abs_path ($PROGRAM_NAME);
 
 unless (defined($apath)) {
-	logger ("Unable to get abs_path: $!");
-	die "Unable to get abs_path: $!\n";
+	logger ("Unable to get abs_path: $OS_ERROR");
+	die "Unable to get abs_path: $OS_ERROR\n";
 };
 
-my $pidfile = sprintf ("%s/%s.pid", $piddir, basename ($apath));
+my $pidfile = sprintf ('%s/%s.pid', $piddir, basename ($apath));
 logger ("Creating pidfile at $pidfile");
-open (PID, ">", $pidfile) or die "Error opening $pidfile: $!\n";
-print PID $$ or die "Error writing to $pidfile: $!\n";
-close PID;
+open (my $pid, '>', $pidfile) or die "Error opening $pidfile: $OS_ERROR\n";
+print $pid $PID or die "Error writing to $pidfile: $OS_ERROR\n";
+close $pid;  ## no critic (InputOutput::RequireCheckedSyscalls
 
 # set correct proctitle
-$0 = abs_path ($0);
+$PROGRAM_NAME = abs_path ($PROGRAM_NAME);  ## no critic (Variables::RequireLocalizedPunctuationVars)
 
 # run bot, at last
 run_jabberbot ();
@@ -97,17 +100,19 @@ exit 0;
 sub daemonize () {
 	__fork ();
 	POSIX::setsid ();
-	open (STDIN, "<", "/dev/null");
-	open (STDOUT, ">", "/dev/null");
-	open (STDERR, ">", "/dev/null");
+	open (STDIN, '<', '/dev/null');   ## no critic (InputOutput::RequireCheckedSyscalls, InputOutput::RequireCheckedOpen)
+	open (STDOUT, '>', '/dev/null');  ## no critic (InputOutput::RequireCheckedSyscalls, InputOutput::RequireCheckedOpen)
+	open (STDERR, '>', '/dev/null');  ## no critic (InputOutput::RequireCheckedSyscalls, InputOutput::RequireCheckedOpen)
 	__fork ();
 	umask 0;
+	return;
 }
 
 sub __fork () {
 	my $pid = fork;
-	die "Can't fork: $!\n" unless (defined ($pid));
+	die "Can't fork: $OS_ERROR\n" unless (defined ($pid));
 	exit if ($pid != 0);
+	return;
 }
 
 __END__

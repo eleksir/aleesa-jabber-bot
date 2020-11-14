@@ -2,10 +2,11 @@ package botlib;
 
 use 5.018;
 use strict;
-use warnings "all";
+use warnings;
 use utf8;
 use open qw(:std :utf8);
-
+use English qw( -no_match_vars );
+use Carp qw(carp);
 use HTTP::Tiny;
 use URI::URL;
 use JSON::XS qw(decode_json encode_json);
@@ -17,21 +18,21 @@ use conf qw(loadConf);
 use vars qw/$VERSION/;
 
 use Exporter qw(import);
-our @EXPORT = qw(weather logger trim randomCommonPhrase);
+our @EXPORT_OK = qw(weather logger trim randomCommonPhrase);
 
-$VERSION = "1.0";
+$VERSION = '1.0';
 
-my $c = loadConf();
+my $c = loadConf ();
 
-sub weather($) {
+sub weather ($) {
 	my $city = shift;
-	$city = trim($city);
+	$city = trim ($city);
 
-	return "Мне нужно ИМЯ города." if ($city eq '');
-	return "Длинновато для названия города." if (length($city) > 80);
+	return 'Мне нужно ИМЯ города.' if ($city eq '');
+	return 'Длинновато для названия города.' if (length ($city) > 80);
 
-	$city = ucfirst($city);
-	my $w = __weather($city);
+	$city = ucfirst ($city);
+	my $w = __weather ($city);
 	my $reply;
 
 	if ($w) {
@@ -39,7 +40,7 @@ sub weather($) {
 			$reply = sprintf ("Погода в городе %s, %s:\n%s, ветер %s %s м/c, температура %s°C, ощущается как %s°C, относительная влажность %s%%, давление %s мм.рт.ст",
 				$w->{name},
 				$w->{country},
-				ucfirst($w->{description}),
+				ucfirst ($w->{description}),
 				$w->{wind_direction},
 				$w->{wind_speed},
 				$w->{temperature_min},
@@ -51,7 +52,7 @@ sub weather($) {
 			$reply = sprintf ("Погода в городе %s, %s:\n%s, ветер %s %s м/c, температура %s-%s°C, ощущается как %s°C, относительная влажность %s%%, давление %s мм.рт.ст",
 				$w->{name},
 				$w->{country},
-				ucfirst($w->{description}),
+				ucfirst ($w->{description}),
 				$w->{wind_direction},
 				$w->{wind_speed},
 				$w->{temperature_min},
@@ -68,23 +69,23 @@ sub weather($) {
 	return $reply;
 }
 
-sub __weather($) {
+sub __weather ($) {
 	my $city = shift;
-	$city = __urlencode($city);
-	my $id = md5_base64($city);
+	$city = __urlencode ($city);
+	my $id = md5_base64 ($city);
 	my $appid = $c->{openweathermap}->{appid};
-	my $now = time();
+	my $now = time ();
 	my $fc;
 	my $w;
 
 # attach to cache data
 	tie my %cachetime, 'DB_File', $c->{openweathermap}->{cachetime} or do {
-		warn "Something nasty happen when cachetime ties to its data: $!";
+		carp "Something nasty happen when cachetime ties to its data: $OS_ERROR";
 		return undef;
 	};
 
 	tie my %cachedata, 'DB_File', $c->{openweathermap}->{cachedata} or do {
-		warn "Something nasty happen when cachedata ties to its data: $!";
+		carp "Something nasty happen when cachedata ties to its data: $OS_ERROR";
 		return undef;
 	};
 
@@ -95,10 +96,10 @@ sub __weather($) {
 		my $r;
 
 # try 3 times and giveup
-		for (my $counter = 0; $counter < 3; $counter++) {
+		for (1..3) {
 			next if ($r->{success});
 			my $http = HTTP::Tiny->new(timeout => 3);
-			$r = $http->get(sprintf("http://api.openweathermap.org/data/2.5/weather?q=%s&lang=ru&APPID=%s", $city, $appid));
+			$r = $http->get(sprintf('http://api.openweathermap.org/data/2.5/weather?q=%s&lang=ru&APPID=%s', $city, $appid));
 			sleep 2;
 		}
 
@@ -106,8 +107,8 @@ sub __weather($) {
 		if ($r->{success}) {
 			$fc = eval { decode_json($r->{content}) };
 
-			if ($@) {
-				warn "[WARN] openweathermap returns corrupted json: $@";
+			if ($EVAL_ERROR) {
+				carp "[WARN] openweathermap returns corrupted json: $EVAL_ERROR";
 				untie %cachetime;
 				untie %cachedata;
 				return undef;
@@ -195,14 +196,16 @@ sub logger {
 		my $mode = '>';
 		$mode = '>>' if (-f $c->{debug_log});
 
-		if (open (LOG, $mode, $c->{debug_log})) {
-			print LOG $msg . "\n";
-			close LOG;
+		if (open (my $LOG, $mode, $c->{debug_log})) {
+			print $LOG $msg . "\n"; ## no critic (InputOutput::RequireCheckedSyscalls, InputOutput::RequireCheckedOpen)
+			close $LOG;  ## no critic (InputOutput::RequireCheckedSyscalls, InputOutput::RequireCheckedOpen)
 		}
 	}
+
+	return;
 }
 
-sub trim($) {
+sub trim ($) {
 	my $str = shift;
 
 	while (substr ($str, 0, 1) =~ /^\s$/) {
@@ -216,21 +219,21 @@ sub trim($) {
 	return $str;
 }
 
-sub randomCommonPhrase() {
+sub randomCommonPhrase () {
 	my @myphrase = (
-		"Так, блядь...",
-		"*Закатывает рукава* И ради этого ты меня позвал?",
-		"Ну чего ты начинаешь, нормально же общались",
-		"Повтори свой вопрос, не поняла",
-		"Выйди и зайди нормально",
-		"Я подумаю",
-		"Даже не знаю что на это ответить",
-		"Ты упал такие вопросы девочке задавать?",
-		"Можно и так, но не уверена",
-		"А как ты думаешь?"
+		'Так, блядь...',
+		'*Закатывает рукава* И ради этого ты меня позвал?',
+		'Ну чего ты начинаешь, нормально же общались',
+		'Повтори свой вопрос, не поняла',
+		'Выйди и зайди нормально',
+		'Я подумаю',
+		'Даже не знаю что на это ответить',
+		'Ты упал такие вопросы девочке задавать?',
+		'Можно и так, но не уверена',
+		'А как ты думаешь?',
 	);
 
-	return ($myphrase[rand($#myphrase -1)]);
+	return $myphrase[rand($#myphrase -1)];
 }
 
 1;

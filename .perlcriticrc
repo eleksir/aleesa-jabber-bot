@@ -1,0 +1,91 @@
+#!/usr/bin/env perlcritic
+severity    = 5
+verbose     = 8
+
+# minorify some of warnings that are not really critical
+[-InputOutput::RequireCheckedClose]
+# What can we handle in case of error?
+
+[-Modules::ProhibitExcessMainComplexity]
+# Noone cares
+
+[-Subroutines::ProhibitExcessComplexity]
+# Noone cares
+
+[-Subroutines::ProhibitExplicitReturnUndef]
+# But it's very handy sometimes!
+
+[-ValuesAndExpressions::ProhibitMagicNumbers]
+# this policy makes too much false positives
+
+[-RegularExpressions::RequireLineBoundaryMatching]
+# We use /m as needed
+
+[-RegularExpressions::RequireExtendedFormatting]
+# We do not use extended formatting of regex, they still not THAT complex
+
+[-RegularExpressions::RequireDotMatchAnything]
+# huh?
+
+[-RegularExpressions::ProhibitEscapedMetacharacters]
+# Looks like it pointless
+
+[-ControlStructures::ProhibitCascadingIfElse]
+# I like long if..else chains
+
+[-ControlStructures::ProhibitPostfixControls]
+# In short lines we can afford ourselves to use postfix controls
+# but ofcorse we should avoid such constructions in long lines.
+
+[-Subroutines::ProhibitSubroutinePrototypes]
+# Contrary to  Perl::Critic  we consider prototypes as useful, even if
+# the compile-time checks of Perl are not perfect,  Perl may give some
+# hints.
+
+[-CodeLayout::RequireTidyCode]
+# Impossible to complete, because of on higher linting levels "## no critic..."
+# require be per-case on same line where critique is, but tidy align them
+# one line down.
+
+[-CodeLayout::ProhibitParensWithBuiltins]
+# duh...
+
+[-ValuesAndExpressions::ProhibitEmptyQuotes]
+# cause we consider following correct and useful:  my $var = '';
+# the recomended use of q{} looks too complex:     my $var = q{};
+
+[-ValuesAndExpressions::ProhibitNoisyQuotes]
+# Other people, other opinions: ","  is better readable than qw(,)
+
+[-BuiltinFunctions::ProhibitSleepViaSelect]
+# We do not wish to use too much external modules.
+# select undef, undef, undef, 0.25; # actually is okay if you add comment that
+# it is sleep for 0.25 seconds
+
+[-NamingConventions::Capitalization]
+# duh...
+# Noone care, really
+
+[-ControlStructures::ProhibitUnlessBlocks]
+# They should not be too complex - only one condition should be checked,
+# that's all
+
+[-Miscellanea::ProhibitTies]
+# Just allow it. It's very handy stuff and extremely simple and safe enugh to use.
+
+[-ValuesAndExpressions::RequireNumberSeparators]
+# Not really
+
+[-InputOutput::RequireBracedFileHandleWithPrint]
+# We prefer not to use braced file handles
+
+[-Documentation::PodSpelling]
+# It doesn't help, but emits annoying errors
+
+[Documentation::RequirePodSections]
+# Considering this as "soft" requirement. For modules that is (or will be)
+# stand-alone libs well formed documentation is highly desired.
+lib_sections    = NAME | VERSION | DESCRIPTION | AUTHOR | LICENSE AND COPYRIGHT
+
+[-ErrorHandling::RequireCheckingReturnValueOfEval]
+# In this app eval is not critical to error, so there is no need to check for it

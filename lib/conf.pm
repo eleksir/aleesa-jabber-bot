@@ -1,67 +1,41 @@
 package conf;
+# loads config
 
 use 5.018;
 use strict;
-use warnings "all";
+use warnings;
 use utf8;
 use open qw(:std :utf8);
+use English qw( -no_match_vars );
 
 use vars qw/$VERSION/;
-use Fcntl qw(O_WRONLY O_CREAT O_TRUNC);
-use JSON::XS qw(decode_json encode_json);
+use JSON::XS;
 
 use Exporter qw(import);
-our @EXPORT = qw(loadConf saveConf);
+our @EXPORT_OK = qw(loadConf);
 
-$VERSION = "1.0";
-sub loadConf ();
-sub saveConf ($);
+$VERSION = '1.0';
 
-sub loadConf () {
-	my $c = "data/config.json";
-	open (C, "<", $c) or die "[FATA] No conf at $c: $!\n";
+sub loadConf {
+	my $c = 'data/config.json';
+	open my $CH, '<', $c or die "[FATA] No conf at $c: $OS_ERROR\n";
 	my $len = (stat ($c)) [7];
 	my $json;
-	my $readlen = read (C, $json, $len);
+	my $readlen = read $CH, $json, $len;
 
 	unless ($readlen) {
-		close C;
-		die "[FATA] Unable to read $c: $!\n";
+		close $CH;                                   ## no critic (InputOutput::RequireCheckedSyscalls
+		die "[FATA] Unable to read $c: $OS_ERROR\n";
 	}
 
 	if ($readlen != $len) {
-		close C;
+		close $CH;                                   ## no critic (InputOutput::RequireCheckedSyscalls
 		die "[FATA] File $c is $len bytes on disk, but we read only $readlen bytes\n";
 	}
 
-	close C;
+	close $CH;                                       ## no critic (InputOutput::RequireCheckedSyscalls
 	my $j = JSON::XS->new->utf8->relaxed;
 	return $j->decode ($json);
-}
-
-sub saveConf($) {
-	my $c = shift;
-	my $file = "data/myapi.json";
-	my $j = JSON::XS->new->pretty->canonical->indent (1);
-	my $json = $j->encode ($c);
-	$j = undef; undef $j;
-	use bytes;
-	my $len = length ($json);
-	no bytes;
-	# TODO: make it transactional
-	sysopen (C, $file, O_WRONLY|O_CREAT|O_TRUNC) or die "[FATA] Unable to open $file: $!\n";
-
-	my $written = syswrite (C, $json, $len);
-
-	unless (defined ($written)) {
-		die "[FATA] Unable to write to $file: $!";
-	}
-
-	unless ($written != $len) {
-		die "[FATA] We wrote $written bytes to $file, bu buffer length id $len bytes\n";
-	}
-
-	close C;
 }
 
 1;
