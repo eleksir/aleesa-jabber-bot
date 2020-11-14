@@ -112,12 +112,14 @@ sub __new_bot_message {
 				my $rate = $bot->message_delay();
 				# rate limit this :) specially for jabber.ru
 				$bot->message_delay($rate * 5);
-				$bot->SendGroupMessage($hash{'reply_to'}, "!help | !помощь - это сообщение");
-				$bot->SendGroupMessage($hash{'reply_to'}, "!w город | !п город - погода в городе");
-				$bot->SendGroupMessage($hash{'reply_to'}, "!ping | !пинг - попинговать бота");
-				$bot->SendGroupMessage($hash{'reply_to'}, "!some_brew - выдать соответсвующий напиток, на донный момент бармен умеет выдать rum, vodka, beer, tequila, whisky, absinthe");
-				$bot->SendGroupMessage($hash{'reply_to'}, "!ver|version - написать что-то про версию ПО");
-				$bot->message_delay($rate);
+				$bot->SendGroupMessage($hash{'reply_to'}, <<"EOL" );
+!help | !помощь - это сообщение
+!w город | !п город - погода в городе
+!ping | !пинг - попинговать бота
+!some_brew - выдать соответсвующий напиток, бармен может налить rum, vodka, beer, tequila, whisky, absinthe
+!ver|version - написать что-то про версию ПО
+EOL
+
 			} else {
 				$hailo->learn($text);
 				return;
