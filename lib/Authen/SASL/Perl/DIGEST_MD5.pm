@@ -283,9 +283,9 @@ sub client_step {   # $self, $server_sasl_credentials
   }
 
   my $authzid = $self->_call('authname');
-  if (defined $authzid) {
-    $response{authzid} = $authzid;
-  }
+#  if (defined $authzid) {
+#    $response{authzid} = $authzid;
+#  }
 
   my $serv_name = $self->_call('serv');
   if (defined $serv_name) {
