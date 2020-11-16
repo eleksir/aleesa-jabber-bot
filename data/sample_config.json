@@ -20,5 +20,11 @@
         "cachedata": "data/cache/openweathermap.Id-Data.db",
         "appid": "get_it_on_openweathermap.org"
     },
-    "debug_log" : "/var/log/aleesa-telegram-bot/debug.log"
+    "debug_log" : "/var/log/aleesa-telegram-bot/debug.log",
+    "lat" : {
+        "brain" : "data/lat/brain.sqlite"
+    },
+    "karma" : {
+        "dir" : "data/karma"
+    }
 }

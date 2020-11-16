@@ -14,6 +14,8 @@ use Hailo;
 
 use conf qw(loadConf);
 use botlib qw(weather logger trim randomCommonPhrase);
+use lat qw(latAnswer);
+use karma qw(karmaSet karmaGet);
 
 use Exporter qw(import);
 use vars qw/$VERSION/;
@@ -28,7 +30,7 @@ sub __background_checks {
 	my $bot = shift;
 
 	unless ($imonline) {
-		$bot->ChangeStatus('Chat', 'I\'m here');
+		$bot->ChangeStatus('Available', 'I\'m here');
 		$imonline = 1;
 	}
 
@@ -54,7 +56,6 @@ sub __new_bot_message {
 		} elsif ($text eq "$c->{jabberbot}->{aleesa}->{csign}ping") {
 			$bot->SendGroupMessage($hash{'reply_to'}, 'Pong.');
 		} elsif (substr($text, 0, 1) eq $c->{jabberbot}->{aleesa}->{csign}) {
-
 			if (substr($text, 1, 3) eq 'rum') {
 				eval {
 					$bot->SendGroupMessage(
@@ -106,23 +107,44 @@ sub __new_bot_message {
 						weather($city) =~ tr/\n/ /r
 					);
 				};
-			} elsif ((length($text) == 8 && substr($text, 1, 8) eq 'version')  ||  (length ($text) == 4 && substr($text, 1, 4) eq 'ver')) {
+			} elsif (substr($text, 1) eq 'version'  ||  substr($text, 1) eq 'ver') {
 				$bot->SendGroupMessage($hash{'reply_to'}, 'Версия нуль.чего-то_там.чего-то_там');
-			} elsif ((length ($text) == 5 && substr($text, 1, 5) eq 'help')  ||  (length ($text) == 7 && substr($text, 1, 7) eq 'помощь')) {
-				my $rate = $bot->message_delay();
-				# rate limit this :) specially for jabber.ru
-				$bot->message_delay($rate * 5);
+			} elsif (substr($text, 1) eq 'help'  ||  substr($text, 1) eq 'помощь') {
 				$bot->SendGroupMessage($hash{'reply_to'}, <<"EOL" );
 !help | !помощь - это сообщение
 !w город | !п город - погода в городе
+!lat | !лат - сгенерировать фразу из крылатого латинского выражения
 !ping | !пинг - попинговать бота
 !some_brew - выдать соответсвующий напиток, бармен может налить rum, vodka, beer, tequila, whisky, absinthe
-!ver|version - написать что-то про версию ПО
+!ver | !version | !версия - написать что-то про версию ПО
+!karma фраза | !карма фраза - посмотреть карму фразы
+фраза++ | фраза-- - повысить или понизить карму фразы
 EOL
 
+			} elsif (substr($text, 1) eq 'lat'  ||  substr($text, 1) eq 'лат') {
+				$bot->SendGroupMessage($hash{'reply_to'}, latAnswer());
+			} elsif (substr($text, 1, 6) eq 'karma '  ||  substr($text, 1, 6) eq 'карма '  ||  substr($text, 1) eq 'karma'  ||  substr($text, 1) eq 'карма') {
+				my $mytext = substr($text, 7);
+
+				if ($mytext ne '') {
+					chomp($mytext);
+					$mytext = trim($mytext);
+				}
+
+				$bot->SendGroupMessage($hash{'reply_to'}, karmaGet($hash{'reply_to'}, $mytext));
 			} else {
 				$hailo->learn($text);
 				return;
+			}
+		} elsif ((substr($text, -2) eq '++') || (substr($text, -2) eq '--')) {
+			my @arr = split(/\n/, $text);
+
+			if ($#arr < 1) {
+				my $reply = karmaSet($hash{'reply_to'}, substr($text, 0, -2), substr($text, -2));
+				$bot->SendGroupMessage($hash{'reply_to'}, $reply);
+			} else {
+				# just message in chat
+				$hailo->learn($text);
 			}
 		} else {
 			$hailo->learn($text);
