@@ -22,7 +22,8 @@
     },
     "debug_log" : "/var/log/aleesa-telegram-bot/debug.log",
     "lat" : {
-        "brain" : "data/lat/brain.sqlite"
+        "brain" : "data/lat/brain.sqlite",
+        "src" : "lat.txt"
     },
     "karma" : {
         "dir" : "data/karma"
