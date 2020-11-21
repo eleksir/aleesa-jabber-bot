@@ -89,3 +89,6 @@ lib_sections    = NAME | VERSION | DESCRIPTION | AUTHOR | LICENSE AND COPYRIGHT
 
 [-ErrorHandling::RequireCheckingReturnValueOfEval]
 # In this app eval is not critical to error, so there is no need to check for it
+
+[-InputOutput::RequireBriefOpen]
+# Yes, i do!

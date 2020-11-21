@@ -16,6 +16,7 @@ use conf qw(loadConf);
 use botlib qw(weather logger trim randomCommonPhrase);
 use lat qw(latAnswer);
 use karma qw(karmaSet karmaGet);
+use friday qw(friday);
 
 use Exporter qw(import);
 use vars qw/$VERSION/;
@@ -112,11 +113,12 @@ sub __new_bot_message {
 			} elsif (substr($text, 1) eq 'help'  ||  substr($text, 1) eq 'помощь') {
 				$bot->SendGroupMessage($hash{'reply_to'}, <<"EOL" );
 !help | !помощь - это сообщение
-!w город | !п город - погода в городе
+!friday | !пятница - а не пятница ли сегодня?
 !lat | !лат - сгенерировать фразу из крылатого латинского выражения
 !ping | !пинг - попинговать бота
 !some_brew - выдать соответсвующий напиток, бармен может налить rum, vodka, beer, tequila, whisky, absinthe
 !ver | !version | !версия - написать что-то про версию ПО
+!w город | !п город - погода в городе
 !karma фраза | !карма фраза - посмотреть карму фразы
 фраза++ | фраза-- - повысить или понизить карму фразы
 EOL
@@ -132,6 +134,8 @@ EOL
 				}
 
 				$bot->SendGroupMessage($hash{'reply_to'}, karmaGet($hash{'reply_to'}, $mytext));
+			} elsif (substr($text, 1) eq 'friday'  ||  substr($text, 1) eq 'пятница') {
+				$bot->SendGroupMessage($hash{'reply_to'}, friday());
 			} else {
 				$hailo->learn($text);
 				return;

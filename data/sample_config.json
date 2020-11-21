@@ -27,5 +27,9 @@
     },
     "karma" : {
         "dir" : "data/karma"
+    },
+    "friday" : {
+        "dir" : "data/friday",
+        "src" : "data/friday.txt"
     }
 }

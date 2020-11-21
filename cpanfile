@@ -1,5 +1,6 @@
 requires 'Cwd::utf8';
 requires 'DB_File';
+requires 'SQLite_File';
 requires 'Digest::MD5';
 requires 'Digest::SHA';
 requires 'File::Basename';
