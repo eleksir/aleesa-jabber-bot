@@ -1,4 +1,9 @@
 vendor_perl/**
 data/config.json
 data/*.sqlite
-data/cache
+data/*/**
+data/*.orig
+data/*.new
+data/*.bak
+TODO
+*.pid
