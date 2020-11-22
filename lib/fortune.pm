@@ -19,7 +19,6 @@ use SQLite_File;
 use MIME::Base64;
 use File::Path qw(mkpath);
 use conf qw(loadConf);
-use botlib qw(logger);
 
 my $c = loadConf();
 my $dir = $c->{fortune}->{dir};
@@ -42,9 +41,8 @@ sub seed () {
 
 	while (my $fortunefile = readdir ($srcdirhandle)) {
 		my $srcfile = sprintf '%s/%s', $srcdir, $fortunefile;
-#		next;
 		next unless (-f $srcfile);
-#		next if (m/[\.|\$|\@]/);
+		next if ($fortunefile =~ m/\./);
 		open (my $fh, '<', $srcfile)  ||  croak "Unable to open $srcfile, $OS_ERROR\n";
 		# set correct phrase delimiter
 		local $INPUT_RECORD_SEPARATOR = "\n%\n";

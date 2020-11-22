@@ -19,7 +19,6 @@ use SQLite_File;
 use MIME::Base64;
 use File::Path qw(mkpath);
 use conf qw(loadConf);
-use botlib qw(logger);
 
 my $c = loadConf();
 my $dir = $c->{friday}->{dir};
