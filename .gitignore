@@ -1,9 +1,10 @@
 vendor_perl/**
 data/config.json
 data/*.sqlite
-data/*/**
-data/*.orig
-data/*.new
-data/*.bak
+data/cache/**
+data/fortune/**
+data/friday/**
+data/karma/**
+data/lat/**
 TODO
 *.pid
