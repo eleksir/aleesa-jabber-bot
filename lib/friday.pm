@@ -52,8 +52,9 @@ sub seed () {
 		my @daylist = split(//, $days);
 
 		foreach my $day (@daylist) {
+			next unless (defined $day);
 			next unless ($day =~ /^\d$/);
-			push @{$friday->[$day - 1]}, $phrase;
+			push @{$friday->[$day - 1]}, $phrase if (defined $phrase && ($phrase ne '') && ($phrase !~ m/^\s+$/xmsg));
 		}
 	}
 
