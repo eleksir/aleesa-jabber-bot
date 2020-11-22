@@ -17,6 +17,7 @@ use botlib qw(weather logger trim randomCommonPhrase);
 use lat qw(latAnswer);
 use karma qw(karmaSet karmaGet);
 use friday qw(friday);
+use fortune qw(fortune);
 
 use Exporter qw(import);
 use vars qw/$VERSION/;
@@ -113,6 +114,7 @@ sub __new_bot_message {
 			} elsif (substr($text, 1) eq 'help'  ||  substr($text, 1) eq 'помощь') {
 				$bot->SendGroupMessage($hash{'reply_to'}, <<"EOL" );
 !help | !помощь - это сообщение
+!f | !ф | !fortune | !фортунка - рандомная фраза из сборника цитат fortune_mod
 !friday | !пятница - а не пятница ли сегодня?
 !lat | !лат - сгенерировать фразу из крылатого латинского выражения
 !ping | !пинг - попинговать бота
@@ -136,6 +138,11 @@ EOL
 				$bot->SendGroupMessage($hash{'reply_to'}, karmaGet($hash{'reply_to'}, $mytext));
 			} elsif (substr($text, 1) eq 'friday'  ||  substr($text, 1) eq 'пятница') {
 				$bot->SendGroupMessage($hash{'reply_to'}, friday());
+			} elsif (substr($text, 1) eq 'fortune'  ||  substr($text, 1) eq 'фортунка'  ||  substr($text, 1) eq 'f'  ||  substr($text, 1) eq 'ф') {
+				my $phrase = fortune();
+				# workaround Net::Jabber::Bot outgoing message ![:print:] replacement
+				$phrase =~ s/\s\s+\-\-/\n \-\-/xmsg;
+				$bot->SendGroupMessage($hash{'reply_to'}, $phrase);
 			} else {
 				$hailo->learn($text);
 				return;

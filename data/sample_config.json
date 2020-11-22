@@ -31,5 +31,9 @@
     "friday" : {
         "dir" : "data/friday",
         "src" : "data/friday.txt"
+    },
+    "fortune" : {
+        "dir" : "data/fortune",
+        "srcdir" : "data/fortune_src"
     }
 }
