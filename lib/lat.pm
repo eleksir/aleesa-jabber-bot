@@ -8,18 +8,15 @@ use utf8;
 use open qw(:std :utf8);
 use English qw( -no_match_vars );
 use Carp qw(cluck);
-
-use vars qw/$VERSION/;
-use Exporter qw(import);
-our @EXPORT_OK = qw(train latAnswer);
-
-$VERSION = '1.0';
-
 use Hailo;
 use File::Basename qw(dirname);
 use File::Path qw(mkpath);
 use conf qw(loadConf);
-use botlib qw(logger);
+
+use vars qw/$VERSION/;
+use Exporter qw(import);
+our @EXPORT_OK = qw(train latAnswer);
+$VERSION = '1.0';
 
 my $c = loadConf();
 my $brain = $c->{lat}->{brain};

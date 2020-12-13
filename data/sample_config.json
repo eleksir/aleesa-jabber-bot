@@ -20,7 +20,7 @@
         "cachedata": "data/cache/openweathermap.Id-Data.db",
         "appid": "get_it_on_openweathermap.org"
     },
-    "debug_log" : "/var/log/aleesa-telegram-bot/debug.log",
+    "log" : "/var/log/aleesa-jabber-bot/aleesa-jabber-bot.log",
     "lat" : {
         "brain" : "data/lat/brain.sqlite",
         "src" : "lat.txt"

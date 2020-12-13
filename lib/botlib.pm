@@ -12,14 +12,11 @@ use URI::URL;
 use JSON::XS qw(decode_json encode_json);
 use Digest::MD5 qw(md5_base64);
 use DB_File;
-
 use conf qw(loadConf);
 
 use vars qw/$VERSION/;
-
 use Exporter qw(import);
-our @EXPORT_OK = qw(weather logger trim randomCommonPhrase);
-
+our @EXPORT_OK = qw(weather trim randomCommonPhrase);
 $VERSION = '1.0';
 
 my $c = loadConf ();
@@ -187,22 +184,6 @@ sub __urlencode($) {
 	$str = $urlobj->as_string;
 	$urlobj = undef; undef $urlobj;
 	return $str;
-}
-
-sub logger {
-	my $msg = shift;
-
-	if ($c->{debug_log}) {
-		my $mode = '>';
-		$mode = '>>' if (-f $c->{debug_log});
-
-		if (open (my $LOG, $mode, $c->{debug_log})) {
-			print $LOG $msg . "\n"; ## no critic (InputOutput::RequireCheckedSyscalls, InputOutput::RequireCheckedOpen)
-			close $LOG;  ## no critic (InputOutput::RequireCheckedSyscalls, InputOutput::RequireCheckedOpen)
-		}
-	}
-
-	return;
 }
 
 sub trim ($) {

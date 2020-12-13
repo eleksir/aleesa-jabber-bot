@@ -7,13 +7,11 @@ use warnings;
 use utf8;
 use open qw(:std :utf8);
 use English qw( -no_match_vars );
-
-use vars qw/$VERSION/;
 use JSON::XS;
 
+use vars qw/$VERSION/;
 use Exporter qw(import);
 our @EXPORT_OK = qw(loadConf);
-
 $VERSION = '1.0';
 
 sub loadConf {

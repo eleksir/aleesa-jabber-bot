@@ -9,16 +9,14 @@ use English qw( -no_match_vars );
 use Digest::SHA qw(sha1_base64);
 use DB_File;
 use Carp qw(cluck);
+use conf qw(loadConf);
 
 use vars qw/$VERSION/;
 use Exporter qw(import);
 our @EXPORT_OK = qw(karmaSet karmaGet);
-
 $VERSION = '1.0';
 
-use conf qw(loadConf);
-
-my $c = loadConf();
+my $c = loadConf ();
 my $karmadir = $c->{karma}->{dir};
 my $max = 5;
 

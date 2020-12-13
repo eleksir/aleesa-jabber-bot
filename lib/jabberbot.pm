@@ -8,12 +8,10 @@ use strict;
 use warnings;
 use utf8;
 use open qw(:std :utf8);
-
 use Net::Jabber::Bot;
 use Hailo;
-
 use conf qw(loadConf);
-use botlib qw(weather logger trim randomCommonPhrase);
+use botlib qw(weather trim randomCommonPhrase);
 use lat qw(latAnswer);
 use karma qw(karmaSet karmaGet);
 use friday qw(friday);
@@ -32,7 +30,7 @@ sub __background_checks {
 	my $bot = shift;
 
 	unless ($imonline) {
-		$bot->ChangeStatus('Available', 'I\'m here');
+		$bot->ChangeStatus ('Available', 'I\'m here');
 		$imonline = 1;
 	}
 
@@ -48,71 +46,71 @@ sub __new_bot_message {
 		# ignore self messages
 		return if ($hash{'from_full'} eq $bot->{'from_full'});
 		# parse messages
-		my $qname = quotemeta($c->{jabberbot}->{aleesa}->{mucname});
+		my $qname = quotemeta ($c->{jabberbot}->{aleesa}->{mucname});
 		if ($text =~ /^$qname$/) {
-			$bot->SendGroupMessage($hash{'reply_to'}, 'Чего тебе?');
+			$bot->SendGroupMessage ($hash{'reply_to'}, 'Чего тебе?');
 		} elsif ($text =~ /^$qname[\,|\:]? (.+)/) {
-			$bot->SendGroupMessage($hash{'reply_to'}, $hailo->learn_reply($1));
+			$bot->SendGroupMessage ($hash{'reply_to'}, $hailo->learn_reply($1));
 		} elsif ($text eq "$c->{jabberbot}->{aleesa}->{csign}пинг") {
-			$bot->SendGroupMessage($hash{'reply_to'}, 'Понг.');
+			$bot->SendGroupMessage ($hash{'reply_to'}, 'Понг.');
 		} elsif ($text eq "$c->{jabberbot}->{aleesa}->{csign}ping") {
-			$bot->SendGroupMessage($hash{'reply_to'}, 'Pong.');
-		} elsif (substr($text, 0, 1) eq $c->{jabberbot}->{aleesa}->{csign}) {
-			if (substr($text, 1, 3) eq 'rum') {
+			$bot->SendGroupMessage ($hash{'reply_to'}, 'Pong.');
+		} elsif (substr ($text, 0, 1) eq $c->{jabberbot}->{aleesa}->{csign}) {
+			if (substr ($text, 1, 3) eq 'rum') {
 				eval {
-					$bot->SendGroupMessage(
+					$bot->SendGroupMessage (
 						$hash{'reply_to'},
-						'/me притаскивает на подносе стопку рома для ' . (split(/\//,$hash{from_full}))[1] . ', края стопки искрятся кристаллами соли.'
+						'/me притаскивает на подносе стопку рома для ' . (split (/\//,$hash{from_full}))[1] . ', края стопки искрятся кристаллами соли.'
 					);
 				};
-			} elsif (substr($text, 1, 5) eq 'vodka') {
+			} elsif (substr ($text, 1, 5) eq 'vodka') {
 				eval {
-					$bot->SendGroupMessage(
+					$bot->SendGroupMessage (
 						$hash{'reply_to'},
-						'/me подаёт водку с маринованным огурчиком для ' . (split(/\//,$hash{from_full}))[1]
+						'/me подаёт водку с маринованным огурчиком для ' . (split (/\//,$hash{from_full}))[1]
 					);
 				};
 			} elsif (substr($text, 1, 4) eq 'beer') {
 				eval {
-					$bot->SendGroupMessage(
+					$bot->SendGroupMessage (
 						$hash{'reply_to'},
-						'/me бахает об стол перед ' . (split(/\//,$hash{from_full}))[1] . ' кружкой холодного пива, часть пенной шапки сползает по запотевшей спенке кружки.'
+						'/me бахает об стол перед ' . (split (/\//,$hash{from_full}))[1] . ' кружкой холодного пива, часть пенной шапки сползает по запотевшей спенке кружки.'
 					);
 				};
 			} elsif (substr($text, 1, 7) eq 'tequila') {
 				eval {
-					$bot->SendGroupMessage(
+					$bot->SendGroupMessage (
 						$hash{'reply_to'},
-						'/me ставит рядом с ' . (split(/\//,$hash{from_full}))[1] . ' шот текилы, аккуратно на ребро стопки насаживает дольку лайма и ставит кофейное блюдце с горочкой соли.'
+						'/me ставит рядом с ' . (split (/\//,$hash{from_full}))[1] . ' шот текилы, аккуратно на ребро стопки насаживает дольку лайма и ставит кофейное блюдце с горочкой соли.'
 					);
 				};
-			} elsif (substr($text, 1, 6) eq 'whisky') {
+			} elsif (substr ($text, 1, 6) eq 'whisky') {
 				eval {
-					$bot->SendGroupMessage(
+					$bot->SendGroupMessage (
 						$hash{'reply_to'},
-						'/me демонстративно достаёт из морозилки пару кубических камушков, бросает их в толстодонный стакан и аккуратно наливает Jack Daniels. Запускает стакан вдоль барной стойки, он останавливается около ' . (split(/\//,$hash{from_full}))[1] . '.'
+						'/me демонстративно достаёт из морозилки пару кубических камушков, бросает их в толстодонный стакан и аккуратно наливает Jack Daniels. Запускает стакан вдоль барной стойки, он останавливается около ' . (split (/\//,$hash{from_full}))[1] . '.'
 					);
 				};
-			} elsif (substr($text, 1, 8) eq 'absinthe') {
+			} elsif (substr ($text, 1, 8) eq 'absinthe') {
 				eval {
-					$bot->SendGroupMessage(
+					$bot->SendGroupMessage (
 						$hash{'reply_to'},
-						"/me наливает абсент в стопку. Смочив кубик сахара в абсенте кладёт его на дырявую ложечку и пожигает. Как только пламя потухнет, $c->{jabberbot}->{aleesa}->{mucname} размешивает оплавившийся кубик в абсенте и подносит стопку " .(split(/\//,$hash{from_full}))[1] . '.'
+						"/me наливает абсент в стопку. Смочив кубик сахара в абсенте кладёт его на дырявую ложечку и пожигает. Как только пламя потухнет, $c->{jabberbot}->{aleesa}->{mucname} размешивает оплавившийся кубик в абсенте и подносит стопку " .(split (/\//,$hash{from_full}))[1] . '.'
 					);
 				};
-			} elsif (substr($text, 1, 2) eq 'w '  ||  substr($text, 1, 2) eq 'п ') {
-				my $city = substr($text, 2);
+			} elsif (substr ($text, 1, 2) eq 'w '  ||  substr ($text, 1, 2) eq 'п ') {
+				my $city = substr ($text, 2);
 
 				eval {
-					$bot->SendGroupMessage(
+					$bot->SendGroupMessage (
 						$hash{'reply_to'},
 						weather($city) =~ tr/\n/ /r
 					);
 				};
-			} elsif (substr($text, 1) eq 'version'  ||  substr($text, 1) eq 'ver') {
-				$bot->SendGroupMessage($hash{'reply_to'}, 'Версия нуль.чего-то_там.чего-то_там');
-			} elsif (substr($text, 1) eq 'help'  ||  substr($text, 1) eq 'помощь') {
-				$bot->SendGroupMessage($hash{'reply_to'}, <<"EOL" );
+			} elsif (substr ($text, 1) eq 'version'  ||  substr ($text, 1) eq 'ver') {
+				$bot->SendGroupMessage ($hash{'reply_to'}, 'Версия нуль.чего-то_там.чего-то_там');
+			} elsif (substr ($text, 1) eq 'help'  ||  substr ($text, 1) eq 'помощь') {
+				$bot->SendGroupMessage ($hash{'reply_to'}, <<"EOL" );
 !help | !помощь - это сообщение
 !f | !ф | !fortune | !фортунка - рандомная фраза из сборника цитат fortune_mod
 !friday | !пятница - а не пятница ли сегодня?
@@ -125,44 +123,44 @@ sub __new_bot_message {
 фраза++ | фраза-- - повысить или понизить карму фразы
 EOL
 
-			} elsif (substr($text, 1) eq 'lat'  ||  substr($text, 1) eq 'лат') {
-				$bot->SendGroupMessage($hash{'reply_to'}, latAnswer());
-			} elsif (substr($text, 1, 6) eq 'karma '  ||  substr($text, 1, 6) eq 'карма '  ||  substr($text, 1) eq 'karma'  ||  substr($text, 1) eq 'карма') {
-				my $mytext = substr($text, 7);
+			} elsif (substr ($text, 1) eq 'lat'  ||  substr ($text, 1) eq 'лат') {
+				$bot->SendGroupMessage ($hash{'reply_to'}, latAnswer ());
+			} elsif (substr ($text, 1, 6) eq 'karma '  ||  substr($text, 1, 6) eq 'карма '  ||  substr ($text, 1) eq 'karma'  ||  substr ($text, 1) eq 'карма') {
+				my $mytext = substr ($text, 7);
 
 				if ($mytext ne '') {
-					chomp($mytext);
-					$mytext = trim($mytext);
+					chomp $mytext;
+					$mytext = trim $mytext;
 				}
 
-				$bot->SendGroupMessage($hash{'reply_to'}, karmaGet($hash{'reply_to'}, $mytext));
-			} elsif (substr($text, 1) eq 'friday'  ||  substr($text, 1) eq 'пятница') {
-				$bot->SendGroupMessage($hash{'reply_to'}, friday());
-			} elsif (substr($text, 1) eq 'fortune'  ||  substr($text, 1) eq 'фортунка'  ||  substr($text, 1) eq 'f'  ||  substr($text, 1) eq 'ф') {
-				my $phrase = fortune();
+				$bot->SendGroupMessage ($hash{'reply_to'}, karmaGet ($hash{'reply_to'}, $mytext));
+			} elsif (substr ($text, 1) eq 'friday'  ||  substr ($text, 1) eq 'пятница') {
+				$bot->SendGroupMessage ($hash{'reply_to'}, friday ());
+			} elsif (substr ($text, 1) eq 'fortune'  ||  substr ($text, 1) eq 'фортунка'  ||  substr ($text, 1) eq 'f'  ||  substr ($text, 1) eq 'ф') {
+				my $phrase = fortune ();
 				# workaround Net::Jabber::Bot outgoing message ![:print:] replacement
 				$phrase =~ s/\s\s+\-\-/\n \-\-/xmsg;
-				$bot->SendGroupMessage($hash{'reply_to'}, $phrase);
+				$bot->SendGroupMessage ($hash{'reply_to'}, $phrase);
 			} else {
-				$hailo->learn($text);
+				$hailo->learn ($text);
 				return;
 			}
-		} elsif ((substr($text, -2) eq '++') || (substr($text, -2) eq '--')) {
-			my @arr = split(/\n/, $text);
+		} elsif ((substr ($text, -2) eq '++') || (substr ($text, -2) eq '--')) {
+			my @arr = split (/\n/, $text);
 
 			if ($#arr < 1) {
-				my $reply = karmaSet($hash{'reply_to'}, substr($text, 0, -2), substr($text, -2));
-				$bot->SendGroupMessage($hash{'reply_to'}, $reply);
+				my $reply = karmaSet($hash{'reply_to'}, substr ($text, 0, -2), substr ($text, -2));
+				$bot->SendGroupMessage ($hash{'reply_to'}, $reply);
 			} else {
 				# just message in chat
-				$hailo->learn($text);
+				$hailo->learn ($text);
 			}
 		} else {
-			$hailo->learn($text);
+			$hailo->learn ($text);
 			return;
 		}
 	} elsif ($hash{'type'} eq 'chat') {
-		$bot->SendPersonalMessage($hash{'reply_to'}, 'Я вас не знаю, идите нахуй.');
+		$bot->SendPersonalMessage ($hash{'reply_to'}, 'Я вас не знаю, идите нахуй.');
 		return;
 	}
 
@@ -171,23 +169,23 @@ EOL
 
 
 sub run_jabberbot {
-	$hailo = Hailo->new(
+	$hailo = Hailo->new (
 		brain => $c->{jabberbot}->{aleesa}->{brain},
 		order => 2
 	);
 
 	my %conflist = ();
 	$conflist{$c->{jabberbot}->{aleesa}->{room}} = [];
-	my $qname = quotemeta($c->{jabberbot}->{aleesa}->{mucname});
+	my $qname = quotemeta ($c->{jabberbot}->{aleesa}->{mucname});
 
-	my $bot = Net::Jabber::Bot->new(
+	my $bot = Net::Jabber::Bot->new (
 		server => $c->{jabberbot}->{aleesa}->{host},
 		server_host => $c->{jabberbot}->{aleesa}->{host},
 		conference_server => $c->{jabberbot}->{aleesa}->{confsrv},
 		tls => 0,
 		username => $c->{jabberbot}->{aleesa}->{authname},
 # threre is some nasty bug in module, so we have to set from_full explicitly
-		from_full => sprintf(
+		from_full => sprintf (
 			"%s@%s/%s",
 			$c->{jabberbot}->{aleesa}->{room},
 			$c->{jabberbot}->{aleesa}->{confsrv},
@@ -206,7 +204,7 @@ sub run_jabberbot {
 	while (sleep 3) {
 		eval {
 			$imonline = 0;
-			$bot->Start();
+			$bot->Start ();
 		};
 	}
 

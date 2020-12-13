@@ -13,7 +13,9 @@ requires 'JSON::PP';
 requires 'POSIX';
 requires 'URI::URL';
 requires 'local::lib';
-
+requires 'Log::Any';
+requires 'Log::Any::Adapter';
+requires 'Log::Any::For::Std';
 
 # Bundled Net::Jabber::Bot deps
 # requires 'Net::Jabber::Bot';
