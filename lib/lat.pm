@@ -5,30 +5,29 @@ use 5.018;
 use strict;
 use warnings;
 use utf8;
-use open qw(:std :utf8);
-use English qw( -no_match_vars );
-use Carp qw(cluck);
+use open qw (:std :utf8);
+use English qw ( -no_match_vars );
+use Carp qw (carp);
+use File::Basename qw (dirname);
+use File::Path qw (make_path);
 use Hailo;
-use File::Basename qw(dirname);
-use File::Path qw(mkpath);
-use conf qw(loadConf);
+use conf qw (loadConf);
 
 use vars qw/$VERSION/;
-use Exporter qw(import);
-our @EXPORT_OK = qw(train latAnswer);
+use Exporter qw (import);
+our @EXPORT_OK = qw (train latAnswer);
 $VERSION = '1.0';
 
-my $c = loadConf();
+my $c = loadConf ();
 my $brain = $c->{lat}->{brain};
 my $srcfile = $c->{lat}->{src};
 
-# swallow phrase and return answer
 sub train () {
-	my $braindir = dirname ($brain);
+	my $braindir = dirname $brain;
 
 	unless (-d $braindir) {
-		mkpath ($braindir) or do {
-			cluck "Unable to create $braindir: $OS_ERROR";
+		make_path ($braindir) or do {
+			carp "Unable to create $braindir: $OS_ERROR";
 			exit 1;
 		};
 	}
@@ -39,24 +38,24 @@ sub train () {
 		order => 2
 	);
 
-	$lat->train($srcfile);
-	my ($tokens, $expressions) = ($lat->stats())[0,1];
+	$lat->train ($srcfile);
+	my ($tokens, $expressions) = ($lat->stats ())[0,1];
 	printf "Total tokens: %s\nTotal expressins: %s\n", $tokens, $expressions;
-	$lat->save();
+	$lat->save ();
 	return;
 }
 
 # just return answer
 sub latAnswer () {
-	my $braindir = dirname ($brain);
+	my $braindir = dirname $brain;
 
 	unless (-d $braindir) {
-		cluck "No lat module data: $braindir is absent! Train lat first.";
+		carp "[ERROR] No lat module data: $braindir is absent! Train lat first.";
 		return '';
 	}
 
 	unless (-f $brain) {
-		cluck "No lat module data: $brain is absent! Train lat first.";
+		carp "[ERROR] No lat module data: $brain is absent! Train lat first.";
 		return '';
 	}
 
@@ -67,7 +66,7 @@ sub latAnswer () {
 		save_on_exit => 0
 	);
 
-	return $lat->reply();
+	return $lat->reply ();
 }
 
 1;

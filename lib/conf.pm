@@ -17,7 +17,7 @@ $VERSION = '1.0';
 sub loadConf {
 	my $c = 'data/config.json';
 	open my $CH, '<', $c or die "[FATA] No conf at $c: $OS_ERROR\n";
-	my $len = (stat ($c)) [7];
+	my $len = (stat $c) [7];
 	my $json;
 	my $readlen = read $CH, $json, $len;
 

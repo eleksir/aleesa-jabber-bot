@@ -4,31 +4,35 @@ use 5.018;
 use strict;
 use warnings;
 use utf8;
-use open qw(:std :utf8);
-use English qw( -no_match_vars );
-use version; our $VERSION = qw(1.0);
+use open qw (:std :utf8);
+use English qw ( -no_match_vars );
+use version; our $VERSION = qw (1.0);
 
 my $workdir;
 
 # before we run, change working dir
 BEGIN {
-	use Cwd qw(chdir abs_path);
+	use Cwd qw (chdir abs_path);
 	my @CWD = split (/\//, abs_path ($PROGRAM_NAME));
-	if ($#CWD > 1) { $#CWD = $#CWD - 2; }
+
+	if ($#CWD > 1) {
+		$#CWD = $#CWD - 2;
+	}
+
 	$workdir = join ('/', @CWD);
-	chdir ($workdir);
+	chdir $workdir;
 }
 
 use lib ("$workdir/lib", "$workdir/vendor_perl", "$workdir/vendor_perl/lib/perl5");
 no Cwd;
-use Cwd::utf8 qw(chdir abs_path);
-use POSIX qw(setgid setuid setsid);
-use File::Path qw(make_path);
-use File::Basename qw(basename dirname);
+use Cwd::utf8 qw (chdir abs_path);
+use POSIX qw (setgid setuid setsid);
+use File::Path qw (make_path);
+use File::Basename qw (basename dirname);
 use Log::Any::Adapter;
 use Log::Any::For::Std;
-use conf qw(loadConf);
-use jabberbot qw(run_jabberbot);
+use conf qw (loadConf);
+use jabberbot qw (run_jabberbot);
 
 sub daemonize ();
 sub __fork ();
@@ -37,17 +41,21 @@ sub __signal_handler;
 local $OUTPUT_AUTOFLUSH = 1;
 my $runAsUid = $UID;
 
-my $piddir = '/var/run/' . basename (abs_path ($PROGRAM_NAME));
+my $piddir = '/var/run/' . basename (abs_path $PROGRAM_NAME);
 my $C = loadConf ();
 my $logfile;
-if (defined $C->{'log'}) { $logfile = $C->{'log'}; }
-elsif (defined $C->{'debug_log'}) {$logfile = $C->{'debug_log'}; }
+
+if (defined $C->{'log'}) {
+	$logfile = $C->{'log'};
+} elsif (defined $C->{'debug_log'}) {
+	$logfile = $C->{'debug_log'};
+}
 
 # if we run under root, create pid dir and set correct owner for it, same for debug log if it is defined
 if ($UID == 0) {
 	my $user = $C->{user};
 	die "Unable to run as root, please define unprivileged user in config.json\n" unless (defined ($user));
-	my ($uid, $gid) = (getpwnam ($user))[2,3];
+	my ($uid, $gid) = (getpwnam $user)[2,3];
 
 	unless (-d $piddir) {
 		make_path (
@@ -55,13 +63,11 @@ if ($UID == 0) {
 				uid   => $uid,
 				group => $gid
 			}
-		);
+		) or die "Unable to create $piddir: $OS_ERROR\n";
 	}
 
-	die "Unable to create $piddir" unless (-d $piddir); ## no critic (ErrorHandling::RequireCarping)
-
 	if (defined $logfile) {
-		my $logdir = dirname ($logfile);
+		my $logdir = dirname $logfile;
 
 		unless (-d $logdir) {
 			make_path (
@@ -69,15 +75,13 @@ if ($UID == 0) {
 					uid   => $uid,
 					group => $gid
 				}
-			);
+			) or die "Unable to create $logdir: $OS_ERROR\n";
 		}
-
-		die "Unable to create $logdir" unless (-d $logdir); ## no critic (ErrorHandling::RequireCarping)
 	}
 
 # drop privs
-	setgid ($gid) or die "Unable to switch to group of $user($OS_ERROR)\n";
-	setuid ($uid) or die "Unable to switch to account $user($OS_ERROR)\n";
+	setgid ($gid) or die "Unable to switch to group of $user: $OS_ERROR\n";
+	setuid ($uid) or die "Unable to switch to account $user: $OS_ERROR\n";
 } else {
 	$piddir = $workdir;
 }
@@ -92,32 +96,39 @@ if (defined $logfile) {
 daemonize ();
 
 # write pidfile
-my $apath = abs_path ($PROGRAM_NAME);
-die "Unable to get abs_path: $OS_ERROR\n" if (! defined $apath);
+my $apath = abs_path $PROGRAM_NAME;
 
-my $pidfile = sprintf ('%s/%s.pid', $piddir, basename ($apath));
+unless (defined $apath) {
+	die "Unable to get abs_path: $OS_ERROR\n";
+}
+
+my $pidfile = sprintf '%s/%s.pid', $piddir, basename $apath;
 warn "Creating pidfile at $pidfile\n";
 open (my $pid, '>', $pidfile) or die "Error opening $pidfile: $OS_ERROR\n";
 print $pid $PID or die "Error writing to $pidfile: $OS_ERROR\n";
-close $pid;  ## no critic (InputOutput::RequireCheckedSyscalls
+close $pid;  ## no critic (InputOutput::RequireCheckedSyscalls)
 
 local $SIG{INT}  = \&__signal_handler;
 local $SIG{TERM} = \&__signal_handler;
 
 # set correct proctitle
-$PROGRAM_NAME = abs_path ($PROGRAM_NAME);  ## no critic (Variables::RequireLocalizedPunctuationVars)
+$PROGRAM_NAME = abs_path $PROGRAM_NAME;  ## no critic (Variables::RequireLocalizedPunctuationVars)
 
 run_jabberbot ();
-unlink ($pidfile) if (-f $pidfile);
+
+if (-f $pidfile) {
+	unlink $pidfile;
+}
+
 exit 0;
 
 sub daemonize () {
 	__fork ();
 	POSIX::setsid ();
 	open (STDIN, '<', '/dev/null');   ## no critic (InputOutput::RequireCheckedSyscalls, InputOutput::RequireCheckedOpen)
-    # we handle STDOUT && STDERR via Log::Any::For::Std, so do not close them explicitly
-	#open (STDOUT, '>', '/dev/null');  ## no critic (InputOutput::RequireCheckedSyscalls, InputOutput::RequireCheckedOpen)
-	#open (STDERR, '>', '/dev/null');  ## no critic (InputOutput::RequireCheckedSyscalls, InputOutput::RequireCheckedOpen)
+	# we handle STDOUT && STDERR via Log::Any::For::Std, so do not close them explicitly
+	#open (STDOUT, '>', '/dev/null'); ## no critic (InputOutput::RequireCheckedSyscalls, InputOutput::RequireCheckedOpen)
+	#open (STDERR, '>', '/dev/null'); ## no critic (InputOutput::RequireCheckedSyscalls, InputOutput::RequireCheckedOpen)
 	__fork ();
 	umask 0;
 	return;
@@ -125,15 +136,27 @@ sub daemonize () {
 
 sub __fork () {
 	my $pid = fork;
-	die "Can't fork: $OS_ERROR\n" unless (defined ($pid));
-	exit if ($pid != 0);
+
+	unless (defined $pid) {
+		die "Can't fork: $OS_ERROR\n";
+	}
+
+	if ($pid != 0) {
+		exit;
+	}
+
 	return;
 }
 
 sub __signal_handler ($) {
 	warn "Caught a signal $OS_ERROR\n";
-	unlink $pidfile if (-f $pidfile);
+
+	if (-f $pidfile) {
+		unlink $pidfile;
+	}
+
 	exit 0;
 }
+
 __END__
 # vim: set ft=perl noet ai ts=4 sw=4 sts=4:

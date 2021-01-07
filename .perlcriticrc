@@ -92,3 +92,9 @@ lib_sections    = NAME | VERSION | DESCRIPTION | AUTHOR | LICENSE AND COPYRIGHT
 
 [-InputOutput::RequireBriefOpen]
 # Yes, i do!
+
+[-ControlStructures::ProhibitNegativeExpressionsInUnlessAndUntilConditions]
+# used only in botlib.pm, in this particular case it makes more clean code
+
+[-ControlStructures::ProhibitDeepNests]
+# jabber bot lib habe very nested structures that a bit fiddle to navigate :(

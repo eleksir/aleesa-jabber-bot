@@ -5,26 +5,26 @@ use 5.018;
 use strict;
 use warnings;
 use utf8;
-use open qw(:std :utf8);
-use English qw( -no_match_vars );
-use Carp qw(cluck croak);
+use open qw (:std :utf8);
+use English qw ( -no_match_vars );
+use Carp qw (croak carp);
 use SQLite_File;
 use MIME::Base64;
-use File::Path qw(mkpath);
-use conf qw(loadConf);
+use File::Path qw (make_path);
+use conf qw (loadConf);
 
 use vars qw/$VERSION/;
 use Exporter qw(import);
 our @EXPORT_OK = qw(seed fortune);
 $VERSION = '1.0';
 
-my $c = loadConf();
+my $c = loadConf ();
 my $dir = $c->{fortune}->{dir};
 my $srcdir = $c->{fortune}->{srcdir};
 
 sub seed () {
 	unless (-d $dir) {
-		mkpath ($dir)  ||  croak "Unable to create $dir: $OS_ERROR";
+		make_path ($dir)  ||  croak "Unable to create $dir: $OS_ERROR";
 	}
 
 	my $backingfile = sprintf '%s/fortune.sqlite', $dir;
@@ -34,19 +34,25 @@ sub seed () {
 	}
 
 	tie my @fortune, 'SQLite_File', $backingfile  ||  croak "Unable to tie to $backingfile: $OS_ERROR\n";
-
 	opendir (my $srcdirhandle, $srcdir)  ||  croak "Unable to open $srcdir: $OS_ERROR";
 
 	while (my $fortunefile = readdir ($srcdirhandle)) {
 		my $srcfile = sprintf '%s/%s', $srcdir, $fortunefile;
-		next unless (-f $srcfile);
-		next if ($fortunefile =~ m/\./);
+
+		unless (-f $srcfile) {
+			next;
+		}
+
+		if ($fortunefile =~ m/\./) {
+			next ;
+		}
+
 		open (my $fh, '<', $srcfile)  ||  croak "Unable to open $srcfile, $OS_ERROR\n";
 		# set correct phrase delimiter
 		local $INPUT_RECORD_SEPARATOR = "\n%\n";
 
 		while (readline $fh) {
-			my $phrase = substr($_, 0, -3);
+			my $phrase = substr $_, 0, -3;
 			push @fortune, $phrase;
 		}
 
@@ -63,7 +69,7 @@ sub fortune () {
 	my $backingfile = sprintf '%s/fortune.sqlite', $dir;
 
 	tie my @array, 'SQLite_File', $backingfile  ||  do {
-		cluck "Unable to tie to $backingfile: $OS_ERROR\n";
+		carp "Unable to tie to $backingfile: $OS_ERROR\n";
 		return '';
 	};
 
