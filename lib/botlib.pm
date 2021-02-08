@@ -9,6 +9,7 @@ use English qw ( -no_match_vars );
 use Carp qw (carp);
 use archeologist qw (dig);
 use conf qw (loadConf);
+use fisher qw (fish);
 use fortune qw (fortune);
 use friday qw (friday);
 use karma qw (karmaGet);
@@ -177,21 +178,23 @@ sub command {
 	} elsif (substr ($text, 1) eq 'help'  ||  substr ($text, 1) eq 'помощь') {
 		$reply = <<"EOL";
 
-${csign}help | ${csign}помощь      - это сообщение
-${csign}cat | ${csign}кис          - кошечка
-${csign}dig | ${csign}копать       - заняться археологией
-${csign}f | ${csign}ф              - рандомная фраза из сборника цитат fortune_mod
-${csign}fortune | ${csign}фортунка - рандомная фраза из сборника цитат fortune_mod
-${csign}friday | ${csign}пятница   - а не пятница ли сегодня?
-${csign}karma фраза         - посмотреть карму фразы
-${csign}карма фраза         - посмотреть карму фразы
-фраза++ | фраза--    - повысить или понизить карму фразы
-${csign}lat | ${csign}лат          - сгенерировать фразу из крылатого латинского выражения
-${csign}ping | ${csign}пинг        - попинговать бота
-${csign}some_brew           - выдать соответствующий напиток, бармен может налить rum, ром, vodka, водку, beer, пиво, tequila, текила, whisky, виски, absinthe, абсент
-${csign}ver | ${csign}version      - написать что-то про версию ПО
-${csign}версия              - написать что-то про версию ПО
-${csign}w город | ${csign}п город  - погода в городе
+${csign}help | ${csign}помощь        - это сообщение
+${csign}cat | ${csign}кис            - кошечка
+${csign}dig | ${csign}копать         - заняться археологией
+${csign}fish | ${csign}fisher        - порыбачить
+${csign}рыба | ${csign}рыбка | ${csign}рыбалка - заняться археологией
+${csign}f | ${csign}ф                - рандомная фраза из сборника цитат fortune_mod
+${csign}fortune | ${csign}фортунка   - рандомная фраза из сборника цитат fortune_mod
+${csign}friday | ${csign}пятница     - а не пятница ли сегодня?
+${csign}karma фраза           - посмотреть карму фразы
+${csign}карма фраза           - посмотреть карму фразы
+фраза++ | фраза--      - повысить или понизить карму фразы
+${csign}lat | ${csign}лат            - сгенерировать фразу из крылатого латинского выражения
+${csign}ping | ${csign}пинг          - попинговать бота
+${csign}some_brew             - выдать соответствующий напиток, бармен может налить rum, ром, vodka, водку, beer, пиво, tequila, текила, whisky, виски, absinthe, абсент
+${csign}ver | ${csign}version        - написать что-то про версию ПО
+${csign}версия                - написать что-то про версию ПО
+${csign}w город | ${csign}п город    - погода в городе
 EOL
 
 	} elsif (substr ($text, 1) eq 'lat'  ||  substr ($text, 1) eq 'лат') {
@@ -200,6 +203,8 @@ EOL
 		$reply = kitty ();
 	} elsif (substr ($text, 1) eq 'dig'  ||  substr ($text, 1) eq 'копать') {
 		$reply = dig ($chattername);
+	} elsif (substr ($text, 1) eq 'fish'  ||  substr ($text, 1) eq 'fisher'  ||  substr ($text, 1) eq 'рыба'  ||  substr ($text, 1) eq 'рыбка'  ||  substr ($text, 1) eq 'рыбалка') {
+		$reply = fish ($chattername);
 	} elsif ((length ($text) >= 6 && (substr ($text, 1, 6) eq 'karma ' || substr ($text, 1, 6) eq 'карма '))  ||  substr ($text, 1) eq 'karma'  ||  substr ($text, 1) eq 'карма') {
 		my $mytext = '';
 
