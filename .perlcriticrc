@@ -35,7 +35,7 @@ verbose     = 8
 
 [-ControlStructures::ProhibitPostfixControls]
 # In short lines we can afford ourselves to use postfix controls
-# but ofcorse we should avoid such constructions in long lines.
+# but of course we should avoid such constructions in long lines.
 
 [-Subroutines::ProhibitSubroutinePrototypes]
 # Contrary to  Perl::Critic  we consider prototypes as useful, even if
@@ -52,7 +52,7 @@ verbose     = 8
 
 [-ValuesAndExpressions::ProhibitEmptyQuotes]
 # cause we consider following correct and useful:  my $var = '';
-# the recomended use of q{} looks too complex:     my $var = q{};
+# the recommended use of q{} looks too complex:     my $var = q{};
 
 [-ValuesAndExpressions::ProhibitNoisyQuotes]
 # Other people, other opinions: ","  is better readable than qw(,)
@@ -64,14 +64,14 @@ verbose     = 8
 
 [-NamingConventions::Capitalization]
 # duh...
-# Noone care, really
+# Noone cares, really
 
 [-ControlStructures::ProhibitUnlessBlocks]
 # They should not be too complex - only one condition should be checked,
 # that's all
 
 [-Miscellanea::ProhibitTies]
-# Just allow it. It's very handy stuff and extremely simple and safe enugh to use.
+# Just allow it. It's very handy stuff and extremely simple and safe enough to use.
 
 [-ValuesAndExpressions::RequireNumberSeparators]
 # Not really
@@ -97,4 +97,4 @@ lib_sections    = NAME | VERSION | DESCRIPTION | AUTHOR | LICENSE AND COPYRIGHT
 # used only in botlib.pm, in this particular case it makes more clean code
 
 [-ControlStructures::ProhibitDeepNests]
-# jabber bot lib habe very nested structures that a bit fiddle to navigate :(
+# jabber bot lib have very nested structures that a bit fiddle to navigate :(

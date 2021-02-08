@@ -13,10 +13,9 @@ use MIME::Base64;
 use Text::Fuzzy qw (distance_edits);
 use URI::URL;
 
-use vars qw /$VERSION/;
+use version; our $VERSION = qw (1.0);
 use Exporter qw (import);
 our @EXPORT_OK = qw (trim urlencode fmatch utf2b64 utf2sha1);
-$VERSION = '1.0';
 
 sub trim {
 	my $str = shift;

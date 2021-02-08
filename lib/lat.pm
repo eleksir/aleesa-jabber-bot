@@ -13,10 +13,9 @@ use File::Path qw (make_path);
 use Hailo;
 use conf qw (loadConf);
 
-use vars qw/$VERSION/;
+use version; our $VERSION = qw (1.0);
 use Exporter qw (import);
 our @EXPORT_OK = qw (train latAnswer);
-$VERSION = '1.0';
 
 my $c = loadConf ();
 my $brain = $c->{lat}->{brain};
@@ -40,7 +39,7 @@ sub train () {
 
 	$lat->train ($srcfile);
 	my ($tokens, $expressions) = ($lat->stats ())[0,1];
-	printf "Total tokens: %s\nTotal expressins: %s\n", $tokens, $expressions;
+	printf "Total tokens: %s\nTotal expressions: %s\n", $tokens, $expressions;
 	$lat->save ();
 	return;
 }

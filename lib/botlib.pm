@@ -7,6 +7,7 @@ use utf8;
 use open qw (:std :utf8);
 use English qw ( -no_match_vars );
 use Carp qw (carp);
+use Math::Random::Secure qw (irand);
 use archeologist qw (dig);
 use conf qw (loadConf);
 use fisher qw (fish);
@@ -18,10 +19,9 @@ use lat qw (latAnswer);
 use util qw (trim utf2sha1);
 use weather qw (weather);
 
-use vars qw/$VERSION/;
+use version; our $VERSION = qw (1.0);
 use Exporter qw(import);
 our @EXPORT_OK = qw(command randomCommonPhrase realjid);
-$VERSION = '1.0';
 
 my $c = loadConf ();
 
@@ -39,7 +39,7 @@ sub randomCommonPhrase () {
 		'А как ты думаешь?',
 	);
 
-	return $myphrase[int (rand ($#myphrase + 1))];
+	return $myphrase[irand ($#myphrase + 1)];
 }
 
 sub command {
@@ -233,7 +233,7 @@ EOL
 	return $reply;
 }
 
-# in this particular case real jid is really hidden :) and i hope that i found where it is seaking.
+# in this particular case real jid is really hidden :) and i hope that i found where it is hiding.
 sub realjid {
 	my %hash = @_;
 	my $bot = $hash{'bot_object'};
@@ -299,7 +299,7 @@ sub realjid {
 			'name' => (split (/\//, $myjid))[1],
 		);
 	} else {
-		# looks like it is correct real jid, assume that conference server and main server are woking on different domains
+		# looks like it is correct real jid, assume that conference server and main server reside on different domains
 		# at least i hope that this assumption correct
 		%result = (
 			'fulljid' => $myjid,

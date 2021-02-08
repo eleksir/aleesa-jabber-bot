@@ -18,6 +18,7 @@ requires 'local::lib';
 requires 'Log::Any';
 requires 'Log::Any::Adapter';
 requires 'Log::Any::For::Std';
+requires 'Math::Random::Secure';
 
 # Bundled Net::Jabber::Bot deps
 # requires 'Net::Jabber::Bot';

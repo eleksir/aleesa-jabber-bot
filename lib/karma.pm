@@ -10,12 +10,11 @@ use Carp qw (carp);
 use DB_File;
 use File::Path qw (make_path);
 use conf qw (loadConf);
-use util qw (utf2sha1);
+use util qw (utf2sha1 trim);
 
-use vars qw/$VERSION/;
+use version; our $VERSION = qw (1.0);
 use Exporter qw (import);
 our @EXPORT_OK = qw (karmaSet karmaGet);
-$VERSION = '1.0';
 
 my $c = loadConf ();
 my $karmadir = $c->{karma}->{dir};
@@ -26,15 +25,12 @@ sub karmaSet (@) {
 	my $chatid = shift;
 	my $phrase = shift;
 	my $action = shift;
+	$phrase = trim $phrase;
 	my $score = 0;
 	# sha1* does not understand utf8, so explicitly construct string cost of decimal numbers only 
 	my $karmafile = utf2sha1 $chatid;
 	$karmafile =~ s/\//-/xmsg;
 	$karmafile = sprintf '%s/%s.db', $karmadir, $karmafile;
-
-	if (($phrase eq '') || ($phrase =~ /^ +$/)) {
-		$phrase = '';
-	}
 
 	unless (-d $karmadir) {
 		make_path ($karmadir) or do {
@@ -45,7 +41,7 @@ sub karmaSet (@) {
 
 	# init hash, store phrase and score
 	tie my %karma, 'DB_File', $karmafile || do {
-		carp "[ERROR] Something nasty happen when cachedata ties to its data: $OS_ERROR";
+		carp "[ERROR] Something nasty happen when karma ties to its data: $OS_ERROR";
 		return sprintf 'Карма %s составляет 0', $phrase;
 	};
 
@@ -91,13 +87,10 @@ sub karmaSet (@) {
 sub karmaGet (@) {
 	my $chatid = shift;
 	my $phrase = shift;
+	$phrase = trim $phrase;
 	my $karmafile = utf2sha1 $chatid;
 	$karmafile =~ s/\//-/xmsg;
 	$karmafile = sprintf '%s/%s.db', $karmadir, $karmafile;
-
-	if (($phrase eq '') || ($phrase =~ /^ +$/)) {
-		$phrase = '';
-	}
 
 	unless (-d $karmadir) {
 		make_path ($karmadir) or do {

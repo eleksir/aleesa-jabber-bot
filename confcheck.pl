@@ -4,16 +4,16 @@ use 5.018;
 use strict;
 use warnings;
 use utf8;
-use open qw(:std :utf8);
-use English qw( -no_match_vars );
-use lib qw(./lib ./vendor_perl ./vendor_perl/lib/perl5);
+use open qw (:std :utf8);
+use English qw ( -no_match_vars );
+use lib qw (./lib ./vendor_perl ./vendor_perl/lib/perl5);
 use JSON::PP;
 
-use version; our $VERSION = qv(1.0);
+use version; our $VERSION = qw (1.0);
 
 my $c = 'data/config.json';
-open (my $C, '<', $c) or die "No conf at $c: $OS_ERROR\n"; ## no critic (InputOutput::RequireBriefOpen)
-my $len = (stat ($c)) [7];
+open (my $C, '<', $c) || die "No conf at $c: $OS_ERROR\n"; ## no critic (InputOutput::RequireBriefOpen)
+my $len = (stat $c) [7];
 my $json;
 my $readlen = read ($C, $json, $len);
 

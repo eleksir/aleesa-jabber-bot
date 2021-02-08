@@ -10,3 +10,6 @@ data/lat/**
 TODO
 *.pid
 *.log
+_Deparsed_XSubs.pm
+.idea/**
+.vstags

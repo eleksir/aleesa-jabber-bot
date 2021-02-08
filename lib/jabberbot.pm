@@ -1,5 +1,5 @@
 # note http://www.gentoo.ru/node/21449
-# необходимо закомменировать строку $response{authzid} = $authzid;
+# необходимо закомментировать строку $response{authzid} = $authzid;
 # в vendor_perl/5.24.3/Authen/SASL/Perl/DIGEST_MD5.pm
 package jabberbot;
 
@@ -18,9 +18,8 @@ use conf qw (loadConf);
 use karma qw (karmaSet);
 use util qw (trim utf2sha1);
 
+use version; our $VERSION = qw (1.0);
 use Exporter qw (import);
-use vars qw/$VERSION/;
-$VERSION = '1.0';
 our @EXPORT_OK = qw (run_jabberbot);
 
 my $c = loadConf ();
@@ -49,7 +48,7 @@ sub __new_bot_message {
 
 	my $text = $hash{body};
 
-	my %jid = realjid (%hash);
+	my %jid = realjid %hash;
 	my $chattername = $jid{'name'};
 	my $chatid;
 
@@ -64,7 +63,7 @@ sub __new_bot_message {
 	my $reply;
 
 	# lazy init chat-bot brains
-	unless (defined ($hailo->{$chatid})) {
+	unless (defined $hailo->{$chatid}) {
 		my $braindir = $c->{jabberbot}->{braindir};
 		my $brainname = sprintf '%s/%s.sqlite', $braindir, $chatid;
 
@@ -88,17 +87,17 @@ sub __new_bot_message {
 	}
 
 	# parse messages
-	my $qname = quotemeta ($bot->{'alias'});
+	my $qname = quotemeta $bot->{'alias'};
 
 	if ($text =~ /^$qname\,?\s*$/) {
 		$reply = 'Чего тебе?';
 	} elsif (($text =~ /^$qname[\,|\:]? (.+)/) && ($hash{'type'} eq 'groupchat')) {
 		$reply = $hailo->{$chatid}->learn_reply ($1);
 	} elsif (substr ($text, 0, 1) eq $c->{jabberbot}->{aleesa}->{csign}) {
-		$reply = command (%hash);
-	# karma agjustment
+		$reply = command %hash;
+	# karma adjustment
 	} elsif (substr ($text, -2) eq '++'  ||  substr ($text, -2) eq '--') {
-		my @arr = split(/\n/, $text);
+		my @arr = split /\n/, $text;
 
 		if ($#arr < 1) {
 			$reply = karmaSet ($chatid, trim (substr ($text, 0, -2)), substr ($text, -2));
@@ -138,7 +137,7 @@ sub __new_bot_message {
 sub run_jabberbot {
 	my %conflist = ();
 	$conflist{$c->{jabberbot}->{aleesa}->{room}} = [];
-	my $qname = quotemeta ($c->{jabberbot}->{aleesa}->{mucname});
+	my $qname = quotemeta $c->{jabberbot}->{aleesa}->{mucname};
 
 	my $bot = Net::Jabber::Bot->new (
 		server => $c->{jabberbot}->{aleesa}->{host},
@@ -149,7 +148,7 @@ sub run_jabberbot {
 		username => $c->{jabberbot}->{aleesa}->{authname},
 # threre is some nasty bug in module, so we have to set from_full explicitly
 		from_full => sprintf (
-			"%s@%s/%s",
+			'%s@%s/%s',
 			$c->{jabberbot}->{aleesa}->{room},
 			$c->{jabberbot}->{aleesa}->{confsrv},
 			$c->{jabberbot}->{aleesa}->{authname}

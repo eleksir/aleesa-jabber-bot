@@ -9,13 +9,13 @@ use open qw (:std :utf8);
 use English qw ( -no_match_vars );
 use Carp qw (carp croak);
 use File::Path qw (make_path);
+use Math::Random::Secure qw (irand);
 use SQLite_File;
 use conf qw (loadConf);
 
-use vars qw/$VERSION/;
+use version; our $VERSION = qw (1.0);
 use Exporter qw (import);
 our @EXPORT_OK = qw (seed friday);
-$VERSION = '1.0';
 
 my $c = loadConf ();
 my $dir = $c->{friday}->{dir};
@@ -46,9 +46,9 @@ sub seed () {
 			next;
 		}
 
-		chomp();
-		my ($phrase, $days) = split(/ \|\| /);
-		my @daylist = split(//, $days);
+		chomp ();
+		my ($phrase, $days) = split (/ \|\| /);
+		my @daylist = split (//, $days);
 
 		foreach my $day (@daylist) {
 			unless (defined $day) {
@@ -59,7 +59,7 @@ sub seed () {
 				next ;
 			}
 
-			if (defined $phrase && ($phrase ne '') && ($phrase !~ m/^\s+$/xmsg)) {
+			if (defined ($phrase) && ($phrase ne '') && ($phrase !~ m/^\s+$/xmsg)) {
 				push @{$friday->[$day - 1]}, $phrase;
 			}
 		}
@@ -84,7 +84,7 @@ sub friday () {
 		return '';
 	};
 
-	my $phrase = $array[int (rand ($#array - 1))];
+	my $phrase = $array[irand ($#array - 1)];
 	# decode?
 	utf8::decode $phrase;
 	untie @array;

@@ -15,10 +15,9 @@ use JSON::XS;
 use conf qw (loadConf);
 use util qw (trim urlencode);
 
-use vars qw/$VERSION/;
+use version; our $VERSION = qw (1.0);
 use Exporter qw (import);
 our @EXPORT_OK = qw (weather);
-$VERSION = '1.0';
 
 my $c = loadConf ();
 
@@ -98,7 +97,7 @@ sub __weather {
 	};
 
 	# lookup cache
-	if (defined ($cachetime{$id}) && ($now - $cachetime{$id}) < 10800) {
+	if (defined ($cachetime{$id}) && (($now - $cachetime{$id}) < 10800)) {
 		$fc = decode_json ($cachedata{$id});
 	} else {
 		my $r;
@@ -141,7 +140,7 @@ sub __weather {
 	untie %cachetime;
 	untie %cachedata;
 
-	# TODO: check all of this for existance
+	# TODO: check all of this for existence
 	$w->{'name'} = $fc->{name};
 	$w->{'state'} = $fc->{state};
 	$w->{'country'} = $fc->{sys}->{country};

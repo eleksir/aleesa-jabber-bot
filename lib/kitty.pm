@@ -10,10 +10,9 @@ use Carp qw (carp);
 use JSON::XS;
 use HTTP::Tiny;
 
-use vars qw/$VERSION/;
+use version; our $VERSION = qw (1.0);
 use Exporter qw (import);
 our @EXPORT_OK = qw (kitty);
-$VERSION = '1.0';
 
 sub kitty {
 	my $r;

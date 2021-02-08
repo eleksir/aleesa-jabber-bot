@@ -4,10 +4,9 @@ use 5.018;
 use strict;
 use warnings;
 use utf8;
-use open qw(:std :utf8);
-use English qw( -no_match_vars );
-use vars qw/$VERSION/;
-$VERSION = '1.0';
+use open qw (:std :utf8);
+use English qw ( -no_match_vars );
+use version; our $VERSION = qw (1.0);
 
 my $workdir;
 
@@ -21,7 +20,7 @@ BEGIN {
 }
 
 use lib ("$workdir/lib", "$workdir/vendor_perl", "$workdir/vendor_perl/lib/perl5");
-use friday qw(seed);
+use friday qw (seed);
 
 seed ();
 

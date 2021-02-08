@@ -1,5 +1,5 @@
 package fortune;
-# Any fortune_mod sources are suitable. Text file with "\n%\n" sentence delimeter.
+# Any fortune_mod sources are suitable. Text file with "\n%\n" sentence delimiters.
 
 use 5.018;
 use strict;
@@ -9,14 +9,14 @@ use open qw (:std :utf8);
 use English qw ( -no_match_vars );
 use Carp qw (croak carp);
 use SQLite_File;
+use Math::Random::Secure qw (irand);
 use MIME::Base64;
 use File::Path qw (make_path);
 use conf qw (loadConf);
 
-use vars qw/$VERSION/;
-use Exporter qw(import);
-our @EXPORT_OK = qw(seed fortune);
-$VERSION = '1.0';
+use version; our $VERSION = qw (1.0);
+use Exporter qw (import);
+our @EXPORT_OK = qw (seed fortune);
 
 my $c = loadConf ();
 my $dir = $c->{fortune}->{dir};
@@ -36,7 +36,7 @@ sub seed () {
 	tie my @fortune, 'SQLite_File', $backingfile  ||  croak "Unable to tie to $backingfile: $OS_ERROR\n";
 	opendir (my $srcdirhandle, $srcdir)  ||  croak "Unable to open $srcdir: $OS_ERROR";
 
-	while (my $fortunefile = readdir ($srcdirhandle)) {
+	while (my $fortunefile = readdir $srcdirhandle) {
 		my $srcfile = sprintf '%s/%s', $srcdir, $fortunefile;
 
 		unless (-f $srcfile) {
@@ -73,7 +73,7 @@ sub fortune () {
 		return '';
 	};
 
-	my $phrase = $array[int (rand ($#array - 1))];
+	my $phrase = $array[irand ($#array - 1)];
 	# decode?
 	utf8::decode $phrase;
 	untie @array;

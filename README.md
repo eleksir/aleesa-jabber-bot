@@ -19,7 +19,7 @@ You'll need "Development Tools" or similar group of packages, perl, perl-devel,
 perl-local-lib, perl-app-cpanm, sqlite-devel, zlib-devel, openssl-devel,
 libdb4-devel (Berkeley DB devel), make.
 
-After installng required dependencies it is possible to run:
+After installing required dependencies it is possible to run:
 
 ```bash
 bash bootstrap.sh

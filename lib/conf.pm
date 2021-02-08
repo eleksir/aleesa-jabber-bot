@@ -9,10 +9,9 @@ use open qw(:std :utf8);
 use English qw( -no_match_vars );
 use JSON::XS;
 
-use vars qw/$VERSION/;
+use version; our $VERSION = qw (1.0);
 use Exporter qw(import);
 our @EXPORT_OK = qw(loadConf);
-$VERSION = '1.0';
 
 sub loadConf {
 	my $c = 'data/config.json';

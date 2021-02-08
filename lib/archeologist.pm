@@ -6,11 +6,11 @@ use warnings;
 use utf8;
 use open qw (:std :utf8);
 use English qw ( -no_match_vars );
+use Math::Random::Secure qw (irand);
 
-use vars qw/$VERSION/;
+use version; our $VERSION = qw (1.0);
 use Exporter qw (import);
 our @EXPORT_OK = qw (dig);
-$VERSION = '1.0';
 
 sub dig {
 	my $name = shift;
@@ -100,21 +100,21 @@ sub dig {
 		'на просторах Украины',
 	);
 
-	my $find_probability = int (rand 100);
-	my $success_probability = int (rand 100);
-	my $artifact_age = int (rand 15000);
+	my $find_probability = irand 100;
+	my $success_probability = irand 100;
+	my $artifact_age = irand 15000;
 
 	if ($find_probability <= 20) {
-		return sprintf 'По уши закопавшись %s, %s, нифига вы не выкопали! Может повезет в другом месте?', $location[int (rand ($#location + 1))], $name;
+		return sprintf 'По уши закопавшись %s, %s, нифига вы не выкопали! Может повезет в другом месте?', $location[irand ($#location + 1)], $name;
 	}
 
-	my $phrase = sprintf "Вы начали раскопки %s и усиленно роете лопатами, экскаватором...\n", $location[int (rand ($#location + 1))];
+	my $phrase = sprintf "Вы начали раскопки %s и усиленно роете лопатами, экскаватором...\n", $location[irand ($#location + 1)];
 	$phrase .= "Вам кажется что ваш совочек ударился обо что-то твердое. Может, это клад?!\n\n";
 
 	if ($success_probability <= 25) {
-		$phrase .= sprintf '%s стал лучшим археологом, выкопав %s! возраст артефакта - %s лет!', $name, $artifact[int (rand ($#artifact + 1))], $artifact_age;
+		$phrase .= sprintf '%s стал лучшим археологом, выкопав %s! возраст артефакта - %s лет!', $name, $artifact[irand ($#artifact + 1)], $artifact_age;
 	} else {
-		$phrase .= sprintf "Поздравляю, %s! Вы только что выкопали %s, возраст - %s лет!\n", $name, $artifact[int (rand ($#artifact + 1))], $artifact_age;
+		$phrase .= sprintf "Поздравляю, %s! Вы только что выкопали %s, возраст - %s лет!\n", $name, $artifact[irand ($#artifact + 1)], $artifact_age;
 		$phrase .= sprintf 'Извини %s, но на артефакт это не тянет! Однако, попытка хорошая!', $name;
 	}
 
