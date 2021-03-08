@@ -12,6 +12,7 @@ use archeologist qw (dig);
 use conf qw (loadConf);
 use fisher qw (fish);
 use fortune qw (fortune);
+use fox qw (fox);
 use friday qw (friday);
 use karma qw (karmaGet);
 use kitty qw (kitty);
@@ -185,6 +186,7 @@ ${csign}fish | ${csign}fisher        - порыбачить
 ${csign}рыба | ${csign}рыбка | ${csign}рыбалка - заняться археологией
 ${csign}f | ${csign}ф                - рандомная фраза из сборника цитат fortune_mod
 ${csign}fortune | ${csign}фортунка   - рандомная фраза из сборника цитат fortune_mod
+${csign}fox | ${csign}лис            - лисичка
 ${csign}friday | ${csign}пятница     - а не пятница ли сегодня?
 ${csign}karma фраза           - посмотреть карму фразы
 ${csign}карма фраза           - посмотреть карму фразы
@@ -201,6 +203,8 @@ EOL
 		$reply = latAnswer ();
 	} elsif (substr ($text, 1) eq 'cat'  ||  substr ($text, 1) eq 'кис') {
 		$reply = kitty ();
+	} elsif (substr ($text, 1) eq 'fox'  ||  substr ($text, 1) eq 'лис') {
+		$reply = fox ();
 	} elsif (substr ($text, 1) eq 'dig'  ||  substr ($text, 1) eq 'копать') {
 		$reply = dig ($chattername);
 	} elsif (substr ($text, 1) eq 'fish'  ||  substr ($text, 1) eq 'fisher'  ||  substr ($text, 1) eq 'рыба'  ||  substr ($text, 1) eq 'рыбка'  ||  substr ($text, 1) eq 'рыбалка') {
