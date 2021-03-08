@@ -19,6 +19,7 @@ use kitty qw (kitty);
 use lat qw (latAnswer);
 use util qw (trim utf2sha1);
 use weather qw (weather);
+use xkcd qw (xkcd);
 
 use version; our $VERSION = qw (1.0);
 use Exporter qw(import);
@@ -197,6 +198,7 @@ ${csign}some_brew             - выдать соответствующий на
 ${csign}ver | ${csign}version        - написать что-то про версию ПО
 ${csign}версия                - написать что-то про версию ПО
 ${csign}w город | ${csign}п город    - погода в городе
+${csign}xkcd                - комикс-стрип с xkcb.ru
 EOL
 
 	} elsif (substr ($text, 1) eq 'lat'  ||  substr ($text, 1) eq 'лат') {
@@ -209,6 +211,8 @@ EOL
 		$reply = dig ($chattername);
 	} elsif (substr ($text, 1) eq 'fish'  ||  substr ($text, 1) eq 'fisher'  ||  substr ($text, 1) eq 'рыба'  ||  substr ($text, 1) eq 'рыбка'  ||  substr ($text, 1) eq 'рыбалка') {
 		$reply = fish ($chattername);
+	} elsif (substr ($text, 1) eq 'xkcd') {
+		$reply = xkcd ();
 	} elsif ((length ($text) >= 6 && (substr ($text, 1, 6) eq 'karma ' || substr ($text, 1, 6) eq 'карма '))  ||  substr ($text, 1) eq 'karma'  ||  substr ($text, 1) eq 'карма') {
 		my $mytext = '';
 
