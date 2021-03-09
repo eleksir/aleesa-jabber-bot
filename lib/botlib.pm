@@ -1,4 +1,6 @@
 package botlib;
+# TODO: исправить #/bin/bash и #/bin/env
+# TODO: добавить сов и кроликов flickr и imgur
 
 use 5.018;
 use strict;
@@ -9,6 +11,7 @@ use English qw ( -no_match_vars );
 use Carp qw (carp);
 use Math::Random::Secure qw (irand);
 use archeologist qw (dig);
+use buni qw (buni);
 use conf qw (loadConf);
 use fisher qw (fish);
 use fortune qw (fortune);
@@ -180,25 +183,26 @@ sub command {
 	} elsif (substr ($text, 1) eq 'help'  ||  substr ($text, 1) eq 'помощь') {
 		$reply = <<"EOL";
 
-${csign}help | ${csign}помощь        - это сообщение
-${csign}cat | ${csign}кис            - кошечка
-${csign}dig | ${csign}копать         - заняться археологией
-${csign}fish | ${csign}fisher        - порыбачить
-${csign}рыба | ${csign}рыбка | ${csign}рыбалка - заняться археологией
-${csign}f | ${csign}ф                - рандомная фраза из сборника цитат fortune_mod
-${csign}fortune | ${csign}фортунка   - рандомная фраза из сборника цитат fortune_mod
-${csign}fox | ${csign}лис            - лисичка
-${csign}friday | ${csign}пятница     - а не пятница ли сегодня?
-${csign}karma фраза           - посмотреть карму фразы
-${csign}карма фраза           - посмотреть карму фразы
-фраза++ | фраза--      - повысить или понизить карму фразы
-${csign}lat | ${csign}лат            - сгенерировать фразу из крылатого латинского выражения
-${csign}ping | ${csign}пинг          - попинговать бота
-${csign}some_brew             - выдать соответствующий напиток, бармен может налить rum, ром, vodka, водку, beer, пиво, tequila, текила, whisky, виски, absinthe, абсент
-${csign}ver | ${csign}version        - написать что-то про версию ПО
-${csign}версия                - написать что-то про версию ПО
-${csign}w город | ${csign}п город    - погода в городе
-${csign}xkcd                - комикс-стрип с xkcb.ru
+${csign}help | ${csign}помощь           - это сообщение
+${csign}buni                     - комикс-стрип hapi buni
+${csign}cat | ${csign}кис               - кошечка
+${csign}dig | ${csign}копать            - заняться археологией
+${csign}fish | ${csign}fisher           - порыбачить
+${csign}рыба | ${csign}рыбка | ${csign}рыбалка - порыбачить
+${csign}f | ${csign}ф                   - рандомная фраза из сборника цитат fortune_mod
+${csign}fortune | ${csign}фортунка      - рандомная фраза из сборника цитат fortune_mod
+${csign}fox | ${csign}лис               - лисичка
+${csign}friday | ${csign}пятница        - а не пятница ли сегодня?
+${csign}karma фраза              - посмотреть карму фразы
+${csign}карма фраза              - посмотреть карму фразы
+фраза++ | фраза--         - повысить или понизить карму фразы
+${csign}lat | ${csign}лат               - сгенерировать фразу из крылатого латинского выражения
+${csign}ping | ${csign}пинг             - попинговать бота
+${csign}some_brew                - выдать соответствующий напиток, бармен может налить rum, ром, vodka, водку, beer, пиво, tequila, текила, whisky, виски, absinthe, абсент
+${csign}ver | ${csign}version           - написать что-то про версию ПО
+${csign}версия                   - написать что-то про версию ПО
+${csign}w город | ${csign}п город       - погода в городе
+${csign}xkcd                     - комикс-стрип с xkcb.ru
 EOL
 
 	} elsif (substr ($text, 1) eq 'lat'  ||  substr ($text, 1) eq 'лат') {
@@ -211,6 +215,8 @@ EOL
 		$reply = dig ($chattername);
 	} elsif (substr ($text, 1) eq 'fish'  ||  substr ($text, 1) eq 'fisher'  ||  substr ($text, 1) eq 'рыба'  ||  substr ($text, 1) eq 'рыбка'  ||  substr ($text, 1) eq 'рыбалка') {
 		$reply = fish ($chattername);
+	} elsif (substr ($text, 1) eq 'buni') {
+		$reply = buni ();
 	} elsif (substr ($text, 1) eq 'xkcd') {
 		$reply = xkcd ();
 	} elsif ((length ($text) >= 6 && (substr ($text, 1, 6) eq 'karma ' || substr ($text, 1, 6) eq 'карма '))  ||  substr ($text, 1) eq 'karma'  ||  substr ($text, 1) eq 'карма') {
@@ -236,6 +242,19 @@ EOL
 		$reply = 'Pong.';
 	} elsif (substr ($text, 1) eq 'пинг') {
 		$reply = 'Понг.';
+	} elsif (substr ($text, 1) eq 'kde' || substr ($text, 1) eq 'кде') {
+		my @phrases = (
+			'Нет, я не буду поднимать вам плазму.',
+			'Повторяйте эту мантру по утрам не менее 5 раз: "Плазма не падает." И, возможно, она перестанет у вас падать.'
+		);
+
+		$reply = $phrases[irand ($#phrases + 1)];
+	} elsif (substr ($text, 1) eq '=(' || substr ($text, 1) eq ':(' || substr ($text, 1) eq '):') {
+		$reply = ':)';
+	} elsif (substr ($text, 1) eq '=)' || substr ($text, 1) eq ':)' || substr ($text, 1) eq '(:') {
+		$reply = ':D';
+	} elsif (substr ($text, 1, 11) eq '#/bin/bash' || substr ($text, 1, 9) eq '#/bin/sh' || substr ($text, 1, 14) eq '#/usr/bin/env') {
+		$reply = 'Кажется, вы ошиблись окном, это не паста.';
 	}
 
 	return $reply;
