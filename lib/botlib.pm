@@ -13,13 +13,16 @@ use Math::Random::Secure qw (irand);
 use archeologist qw (dig);
 use buni qw (buni);
 use conf qw (loadConf);
+use drink qw (drink);
 use fisher qw (fish);
 use fortune qw (fortune);
 use fox qw (fox);
 use friday qw (friday);
+use image wq (rabbit owl);
 use karma qw (karmaGet);
 use kitty qw (kitty);
 use lat qw (latAnswer);
+use monkeyuser qw (monkeyuser);
 use util qw (trim utf2sha1);
 use weather qw (weather);
 use xkcd qw (xkcd);
@@ -185,8 +188,11 @@ sub command {
 
 ${csign}help | ${csign}помощь           - это сообщение
 ${csign}buni                     - комикс-стрип hapi buni
+${csign}bunny                    - кролик
+${csign}rabbit | ${csign}кролик         - кролик
 ${csign}cat | ${csign}кис               - кошечка
 ${csign}dig | ${csign}копать            - заняться археологией
+${csign}drink | ${csign}праздник        - какой сегодня праздник?
 ${csign}fish | ${csign}fisher           - порыбачить
 ${csign}рыба | ${csign}рыбка | ${csign}рыбалка - порыбачить
 ${csign}f | ${csign}ф                   - рандомная фраза из сборника цитат fortune_mod
@@ -197,6 +203,8 @@ ${csign}karma фраза              - посмотреть карму фраз
 ${csign}карма фраза              - посмотреть карму фразы
 фраза++ | фраза--         - повысить или понизить карму фразы
 ${csign}lat | ${csign}лат               - сгенерировать фразу из крылатого латинского выражения
+${csign}monkeyuser               - комикс-стрип MonkeyUser
+${csign}owl | ${csign}сова              - сова
 ${csign}ping | ${csign}пинг             - попинговать бота
 ${csign}some_brew                - выдать соответствующий напиток, бармен может налить rum, ром, vodka, водку, beer, пиво, tequila, текила, whisky, виски, absinthe, абсент
 ${csign}ver | ${csign}version           - написать что-то про версию ПО
@@ -219,6 +227,14 @@ EOL
 		$reply = buni ();
 	} elsif (substr ($text, 1) eq 'xkcd') {
 		$reply = xkcd ();
+	} elsif (substr ($text, 1) eq 'monkeyuser') {
+		$reply = monkeyuser ();
+	} elsif (substr ($text, 1) eq 'drink' || substr ($text, 1) eq 'праздник') {
+		$reply = drink ();
+	} elsif (substr ($text, 1) eq 'bunny' || substr ($text, 1) eq 'rabbit' || substr ($text, 1) eq 'кролик') {
+		$reply = rabbit ();
+	} elsif (substr ($text, 1) eq 'owl' || substr ($text, 1) eq 'сова') {
+		$reply = owl ();
 	} elsif ((length ($text) >= 6 && (substr ($text, 1, 6) eq 'karma ' || substr ($text, 1, 6) eq 'карма '))  ||  substr ($text, 1) eq 'karma'  ||  substr ($text, 1) eq 'карма') {
 		my $mytext = '';
 

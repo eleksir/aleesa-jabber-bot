@@ -15,6 +15,14 @@
             "csign": "!"
         },
     },
+    "image": {
+        "dir" : "data/image",
+        "flickr" : {
+            "consumer_key" : "md5-like_hash",
+            "consumer_secret" : "some_hash-like_string",
+            "verifier": "some_hash-like_string"
+        }
+    },
     "openweathermap" : {
         "cachetime": "data/cache/openweathermap.Id-Timestamp.db",
         "cachedata": "data/cache/openweathermap.Id-Data.db",

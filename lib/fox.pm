@@ -44,7 +44,7 @@ sub fox {
 			}
 		}
 	} else {
-		cluck sprintf 'Server return status %s with message: %s', $r->{status}, $r->{reason};
+		carp sprintf 'Server return status %s with message: %s', $r->{status}, $r->{reason};
 	}
 
 	return $ret;
