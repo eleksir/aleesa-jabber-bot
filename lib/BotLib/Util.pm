@@ -1,4 +1,4 @@
-package util;
+package BotLib::Util;
 
 use 5.018;
 use strict;

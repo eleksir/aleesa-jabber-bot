@@ -1,4 +1,4 @@
-package fox;
+package BotLib::Fox;
 
 use 5.018;
 use strict;
@@ -12,10 +12,10 @@ use HTTP::Tiny;
 
 use vars qw/$VERSION/;
 use Exporter qw (import);
-our @EXPORT_OK = qw (fox);
+our @EXPORT_OK = qw (Fox);
 $VERSION = '1.0';
 
-sub fox {
+sub Fox {
 	my $r;
 	my $ret = 'Нету лисичек, все разбежались.';
 
@@ -36,7 +36,7 @@ sub fox {
 		};
 
 		unless (defined $jfox) {
-			cluck "[ERROR] Unable to decode JSON: $EVAL_ERROR";
+			carp "[ERROR] Unable to decode JSON: $EVAL_ERROR";
 		} else {
 			if ($jfox->{image}) {
 				$jfox->{image} =~ s/\\//xmsg;

@@ -1,7 +1,7 @@
 # note http://www.gentoo.ru/node/21449
 # необходимо закомментировать строку $response{authzid} = $authzid;
 # в vendor_perl/5.24.3/Authen/SASL/Perl/DIGEST_MD5.pm
-package jabberbot;
+package JabberBot;
 
 use 5.018;
 use strict;
@@ -13,16 +13,16 @@ use Carp qw(carp);
 use File::Path qw (make_path);
 use Hailo;
 use Net::Jabber::Bot;
-use botlib qw (command randomCommonPhrase realjid);
-use conf qw (loadConf);
-use karma qw (karmaSet);
-use util qw (trim utf2sha1);
+use BotLib qw (Command RandomCommonPhrase RealJID);
+use BotLib::Conf qw (LoadConf);
+use BotLib::Karma qw (KarmaSet);
+use BotLib::Util qw (trim utf2sha1);
 
 use version; our $VERSION = qw (1.0);
 use Exporter qw (import);
-our @EXPORT_OK = qw (run_jabberbot);
+our @EXPORT_OK = qw (RunJabberBot);
 
-my $c = loadConf ();
+my $c = LoadConf ();
 my $hailo;
 my $imonline = 0;
 
@@ -47,8 +47,7 @@ sub __new_bot_message {
 	}
 
 	my $text = $hash{body};
-
-	my %jid = realjid %hash;
+	my %jid = RealJID (%hash);
 	my $chattername = $jid{'name'};
 	my $chatid;
 
@@ -93,14 +92,12 @@ sub __new_bot_message {
 		$reply = 'Чего тебе?';
 	} elsif (($text =~ /^$qname[\,|\:]? (.+)/) && ($hash{'type'} eq 'groupchat')) {
 		$reply = $hailo->{$chatid}->learn_reply ($1);
-	} elsif (substr ($text, 0, 1) eq $c->{jabberbot}->{aleesa}->{csign}) {
-		$reply = command %hash;
 	# karma adjustment
 	} elsif (substr ($text, -2) eq '++'  ||  substr ($text, -2) eq '--') {
 		my @arr = split /\n/, $text;
 
 		if ($#arr < 1) {
-			$reply = karmaSet ($chatid, trim (substr ($text, 0, -2)), substr ($text, -2));
+			$reply = KarmaSet ($chatid, trim (substr ($text, 0, -2)), substr ($text, -2));
 		} else {
 			# just message in chat
 			# in groupchat we answer only to phrases that mention us
@@ -111,6 +108,8 @@ sub __new_bot_message {
 				$reply = $hailo->{$chatid}->learn_reply ($text);
 			}
 		}
+	} elsif (substr ($text, 0, 1) eq $c->{jabberbot}->{aleesa}->{csign}) {
+		$reply = Command (%hash);
 	# just message in chat
 	} else {
 		# in groupchat we answer only to phrases that mention us
@@ -134,7 +133,7 @@ sub __new_bot_message {
 }
 
 
-sub run_jabberbot {
+sub RunJabberBot {
 	my %conflist = ();
 	$conflist{$c->{jabberbot}->{aleesa}->{room}} = [];
 	my $qname = quotemeta $c->{jabberbot}->{aleesa}->{mucname};
@@ -172,6 +171,7 @@ sub run_jabberbot {
 
 	return;
 }
+
 
 1;
 

@@ -1,4 +1,4 @@
-package conf;
+package BotLib::Conf;
 # loads config
 
 use 5.018;
@@ -11,9 +11,9 @@ use JSON::XS;
 
 use version; our $VERSION = qw (1.0);
 use Exporter qw(import);
-our @EXPORT_OK = qw(loadConf);
+our @EXPORT_OK = qw(LoadConf);
 
-sub loadConf {
+sub LoadConf {
 	my $c = 'data/config.json';
 	open my $CH, '<', $c or die "[FATA] No conf at $c: $OS_ERROR\n";
 	my $len = (stat $c) [7];

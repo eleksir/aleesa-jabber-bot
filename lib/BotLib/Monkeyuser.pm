@@ -1,4 +1,4 @@
-package monkeyuser;
+package BotLib::Monkeyuser;
 
 use 5.018;
 use strict;
@@ -13,9 +13,9 @@ use Math::Random::Secure qw (irand);
 
 use version; our $VERSION = qw (1.0);
 use Exporter qw (import);
-our @EXPORT_OK = qw (monkeyuser);
+our @EXPORT_OK = qw (Monkeyuser);
 
-sub monkeyuser {
+sub Monkeyuser {
 	my $r;
 	my $ret = 'Нету Monkey User-ов, они все спрятались.';
 	my @link;

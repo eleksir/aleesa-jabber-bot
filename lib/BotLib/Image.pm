@@ -1,23 +1,19 @@
-package image;
+package BotLib::Image;
 
 use 5.018;
 use strict;
 use warnings;
 use utf8;
 use open qw (:std :utf8);
-use flickr qw (flickr_by_tags);
+use BotLib::Image::Flickr qw (FlickrByTags);
 
 use version; our $VERSION = qw (1.0);
 use Exporter qw (import);
-our @EXPORT_OK = qw (rabbit owl);
+our @EXPORT_OK = qw (Rabbit Owl);
 
-my $c = loadConf ();
-my $dir = $c->{image}->{dir};
-
-
-sub rabbit {
+sub Rabbit {
 	# rabbit, but bunny
-	my $url = flickr_by_tags ('animal,bunny');
+	my $url = FlickrByTags ('animal,bunny');
 
 	if (defined $url) {
 		return $url;
@@ -26,8 +22,8 @@ sub rabbit {
 	}
 }
 
-sub owl {
-	my $url = flickr_by_tags ('bird,owl');
+sub Owl {
+	my $url = FlickrByTags ('bird,owl');
 
 	if (defined $url) {
 		return $url;

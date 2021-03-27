@@ -1,4 +1,4 @@
-package xkcd;
+package BotLib::Xkcd;
 
 use 5.018;
 use strict;
@@ -9,9 +9,9 @@ use HTTP::Tiny;
 
 use version; our $VERSION = qw (1.0);
 use Exporter qw (import);
-our @EXPORT_OK = qw (xkcd);
+our @EXPORT_OK = qw (Xkcd);
 
-sub xkcd {
+sub Xkcd {
 	my $http = HTTP::Tiny->new (timeout => 5, max_redirect => 0);
 	my $r = $http->get ('https://xkcd.ru/random/');
 

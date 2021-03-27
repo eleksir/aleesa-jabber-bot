@@ -1,4 +1,4 @@
-package flickr;
+package BotLib::Image::Flickr;
 
 use 5.018;
 use strict;
@@ -16,16 +16,16 @@ use MIME::Base64;
 use SQLite_File;
 use URI::Encode::XS qw (uri_encode);
 
-use conf qw (loadConf);
-use util qw (urlencode);
+use BotLib::Conf qw (LoadConf);
+use BotLib::Util qw (urlencode);
 
 use Data::Dumper;
 
 use version; our $VERSION = qw (1.0);
 use Exporter qw (import);
-our @EXPORT_OK = qw (flickr_init flickr_by_tags flickr_by_text flickr_test_login);
+our @EXPORT_OK = qw (FlickrInit FlickrByTags FlickrByText FlickrTestLogin);
 
-my $c = loadConf ();
+my $c = LoadConf ();
 my $dir = $c->{image}->{dir};
 
 my $flickr_consumer_key      = $c->{image}->{flickr}->{consumer_key};
@@ -464,7 +464,7 @@ sub flickrSearchByTags {
 	}
 }
 
-sub flickr_init {
+sub FlickrInit {
 	my $backingfile = sprintf '%s/secrets.sqlite', $dir;
 
 	unless (-d $dir) {
@@ -527,7 +527,7 @@ sub flickr_init {
 	return 0;
 }
 
-sub flickr_test_login {
+sub FlickrTestLogin {
 	my $text = shift;
 	my $backingfile = sprintf '%s/secrets.sqlite', $dir;
 
@@ -554,7 +554,7 @@ sub flickr_test_login {
 	}
 }
 
-sub flickr_by_tags {
+sub FlickrByTags {
 	my $text = shift;
 	my $backingfile = sprintf '%s/secrets.sqlite', $dir;
 
@@ -595,7 +595,7 @@ sub flickr_by_tags {
 	}
 }
 
-sub flickr_by_text {
+sub FlickrByText {
 	my $text = shift;
 	my $backingfile = sprintf '%s/secrets.sqlite', $dir;
 

@@ -1,4 +1,4 @@
-package drink;
+package BotLib::Drink;
 
 use 5.018;
 use strict;
@@ -13,11 +13,11 @@ use HTML::TokeParser;
 
 use version; our $VERSION = qw (1.0);
 use Exporter qw (import);
-our @EXPORT_OK = qw (drink drink2);
+our @EXPORT_OK = qw (Drink Drink2);
 
 my @MONTH = qw (yanvar fevral mart aprel may iyun iyul avgust sentyabr oktyabr noyabr dekabr);
 
-sub drink {
+sub Drink {
 	my $r;
 	my $ret = 'Не знаю праздников - вджобываю весь день на шахтах, как проклятая.';
 	my ($dayNum, $monthNum) = (localtime ())[3, 4];

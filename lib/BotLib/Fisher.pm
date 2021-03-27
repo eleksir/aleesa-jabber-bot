@@ -1,4 +1,4 @@
-package fisher;
+package BotLib::Fisher;
 
 use 5.018;
 use strict;
@@ -10,10 +10,10 @@ use Math::Random::Secure qw (irand);
 
 use version; our $VERSION = qw (1.0);
 use Exporter qw (import);
-our @EXPORT_OK = qw (fish);
+our @EXPORT_OK = qw (Fish);
 
 
-sub fish {
+sub Fish {
 	my $name = shift;
 
 	my @artifact = (

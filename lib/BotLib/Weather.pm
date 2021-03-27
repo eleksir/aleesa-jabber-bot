@@ -1,4 +1,4 @@
-package weather;
+package BotLib::Weather;
 
 use 5.018;
 use strict;
@@ -12,16 +12,16 @@ use Digest::MD5 qw (md5_base64);
 use File::Path qw (make_path);
 use HTTP::Tiny;
 use JSON::XS;
-use conf qw (loadConf);
-use util qw (trim urlencode);
+use BotLib::Conf qw (LoadConf);
+use BotLib::Util qw (trim urlencode);
 
 use version; our $VERSION = qw (1.0);
 use Exporter qw (import);
-our @EXPORT_OK = qw (weather);
+our @EXPORT_OK = qw (Weather);
 
-my $c = loadConf ();
+my $c = LoadConf ();
 
-sub weather {
+sub Weather {
 	my $city = shift;
 	$city = trim $city;
 

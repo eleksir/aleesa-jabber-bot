@@ -1,4 +1,4 @@
-package friday;
+package BotLib::Friday;
 # for friday data stolen from https://raw.githubusercontent.com/isida/vi/master/data/friday.txt
 
 use 5.018;
@@ -11,18 +11,18 @@ use Carp qw (carp croak);
 use File::Path qw (make_path);
 use Math::Random::Secure qw (irand);
 use SQLite_File;
-use conf qw (loadConf);
+use BotLib::Conf qw (LoadConf);
 
 use version; our $VERSION = qw (1.0);
 use Exporter qw (import);
-our @EXPORT_OK = qw (seed friday);
+our @EXPORT_OK = qw (Seed Friday);
 
-my $c = loadConf ();
+my $c = LoadConf ();
 my $dir = $c->{friday}->{dir};
 my $srcfile = $c->{friday}->{src};
 my @dow = qw (monday tuesday wednesday thursday friday saturday sunday);
 
-sub seed () {
+sub Seed () {
 	unless (-d $dir) {
 		make_path ($dir)  ||  croak "Unable to create $dir: $OS_ERROR";
 	}
@@ -75,7 +75,7 @@ sub seed () {
 }
 
 # just return answer
-sub friday () {
+sub Friday () {
 	my $today = (localtime (time))[6] - 1;
 	my $backingfile = sprintf '%s/%s.sqlite', $dir, $dow[$today];
 

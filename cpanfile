@@ -14,6 +14,7 @@ requires 'IO::Socket::SSL';
 requires 'POSIX';
 requires 'Text::Fuzzy';
 requires 'URI::URL';
+requires 'URI::Encode::XS';
 requires 'local::lib';
 requires 'Log::Any';
 requires 'Log::Any::Adapter';

@@ -1,4 +1,4 @@
-package lat;
+package BotLib::Lat;
 # famous latin phases taken from https://ru.wikipedia.org/wiki/Список_крылатых_латинских_выражений
 
 use 5.018;
@@ -11,17 +11,17 @@ use Carp qw (carp);
 use File::Basename qw (dirname);
 use File::Path qw (make_path);
 use Hailo;
-use conf qw (loadConf);
+use BotLib::Conf qw (LoadConf);
 
 use version; our $VERSION = qw (1.0);
 use Exporter qw (import);
-our @EXPORT_OK = qw (train latAnswer);
+our @EXPORT_OK = qw (Train Lat);
 
-my $c = loadConf ();
+my $c = LoadConf ();
 my $brain = $c->{lat}->{brain};
 my $srcfile = $c->{lat}->{src};
 
-sub train () {
+sub Train () {
 	my $braindir = dirname $brain;
 
 	unless (-d $braindir) {
@@ -45,7 +45,7 @@ sub train () {
 }
 
 # just return answer
-sub latAnswer () {
+sub Lat () {
 	my $braindir = dirname $brain;
 
 	unless (-d $braindir) {

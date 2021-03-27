@@ -1,4 +1,4 @@
-package fortune;
+package BotLib::Fortune;
 # Any fortune_mod sources are suitable. Text file with "\n%\n" sentence delimiters.
 
 use 5.018;
@@ -12,17 +12,17 @@ use SQLite_File;
 use Math::Random::Secure qw (irand);
 use MIME::Base64;
 use File::Path qw (make_path);
-use conf qw (loadConf);
+use BotLib::Conf qw (LoadConf);
 
 use version; our $VERSION = qw (1.0);
 use Exporter qw (import);
-our @EXPORT_OK = qw (seed fortune);
+our @EXPORT_OK = qw (Seed Fortune);
 
-my $c = loadConf ();
+my $c = LoadConf ();
 my $dir = $c->{fortune}->{dir};
 my $srcdir = $c->{fortune}->{srcdir};
 
-sub seed () {
+sub Seed () {
 	unless (-d $dir) {
 		make_path ($dir)  ||  croak "Unable to create $dir: $OS_ERROR";
 	}
@@ -65,7 +65,7 @@ sub seed () {
 }
 
 # just return answer
-sub fortune () {
+sub Fortune () {
 	my $backingfile = sprintf '%s/fortune.sqlite', $dir;
 
 	tie my @array, 'SQLite_File', $backingfile  ||  do {

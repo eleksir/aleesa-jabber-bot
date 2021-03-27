@@ -1,4 +1,4 @@
-package buni;
+package BotLib::Buni;
 
 use 5.018;
 use strict;
@@ -12,9 +12,9 @@ use HTML::TokeParser;
 
 use version; our $VERSION = qw (1.0);
 use Exporter qw (import);
-our @EXPORT_OK = qw (buni);
+our @EXPORT_OK = qw (Buni);
 
-sub buni {
+sub Buni {
 	my $r;
 	my $ret = 'Нету Buni';
 

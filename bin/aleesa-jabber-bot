@@ -31,8 +31,8 @@ use File::Path qw (make_path);
 use File::Basename qw (basename dirname);
 use Log::Any::Adapter;
 use Log::Any::For::Std;
-use conf qw (loadConf);
-use jabberbot qw (run_jabberbot);
+use BotLib::Conf qw (LoadConf);
+use JabberBot qw (RunJabberBot);
 
 sub daemonize ();
 sub __fork ();
@@ -42,7 +42,7 @@ local $OUTPUT_AUTOFLUSH = 1;
 my $runAsUid = $UID;
 
 my $piddir = '/var/run/' . basename (abs_path $PROGRAM_NAME);
-my $C = loadConf ();
+my $C = LoadConf ();
 my $logfile;
 
 if (defined $C->{'log'}) {
@@ -114,7 +114,7 @@ local $SIG{TERM} = \&__signal_handler;
 # set correct proctitle
 $PROGRAM_NAME = abs_path $PROGRAM_NAME;  ## no critic (Variables::RequireLocalizedPunctuationVars)
 
-run_jabberbot ();
+RunJabberBot ();
 
 if (-f $pidfile) {
 	unlink $pidfile;

@@ -1,4 +1,4 @@
-package archeologist;
+package BotLib::Archeologist;
 
 use 5.018;
 use strict;
@@ -10,9 +10,9 @@ use Math::Random::Secure qw (irand);
 
 use version; our $VERSION = qw (1.0);
 use Exporter qw (import);
-our @EXPORT_OK = qw (dig);
+our @EXPORT_OK = qw (Dig);
 
-sub dig {
+sub Dig {
 	my $name = shift;
 
 	my @artifact = (

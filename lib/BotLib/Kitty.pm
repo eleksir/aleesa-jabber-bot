@@ -1,4 +1,4 @@
-package kitty;
+package BotLib::Kitty;
 
 use 5.018;
 use strict;
@@ -12,9 +12,9 @@ use HTTP::Tiny;
 
 use version; our $VERSION = qw (1.0);
 use Exporter qw (import);
-our @EXPORT_OK = qw (kitty);
+our @EXPORT_OK = qw (Kitty);
 
-sub kitty {
+sub Kitty {
 	my $r;
 	my $ret = 'Нету кошечек, все разбежались.';
 

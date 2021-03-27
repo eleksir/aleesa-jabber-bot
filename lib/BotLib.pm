@@ -1,6 +1,4 @@
-package botlib;
-# TODO: исправить #/bin/bash и #/bin/env
-# TODO: добавить сов и кроликов flickr и imgur
+package BotLib;
 
 use 5.018;
 use strict;
@@ -10,30 +8,30 @@ use open qw (:std :utf8);
 use English qw ( -no_match_vars );
 use Carp qw (carp);
 use Math::Random::Secure qw (irand);
-use archeologist qw (dig);
-use buni qw (buni);
-use conf qw (loadConf);
-use drink qw (drink);
-use fisher qw (fish);
-use fortune qw (fortune);
-use fox qw (fox);
-use friday qw (friday);
-use image wq (rabbit owl);
-use karma qw (karmaGet);
-use kitty qw (kitty);
-use lat qw (latAnswer);
-use monkeyuser qw (monkeyuser);
-use util qw (trim utf2sha1);
-use weather qw (weather);
-use xkcd qw (xkcd);
+use BotLib::Archeologist qw (Dig);
+use BotLib::Buni qw (Buni);
+use BotLib::Conf qw (LoadConf);
+use BotLib::Drink qw (Drink);
+use BotLib::Fisher qw (Fish);
+use BotLib::Fortune qw (Fortune);
+use BotLib::Fox qw (Fox);
+use BotLib::Friday qw (Friday);
+use BotLib::Image qw (Rabbit Owl);
+use BotLib::Karma qw (KarmaGet);
+use BotLib::Kitty qw (Kitty);
+use BotLib::Lat qw (Lat);
+use BotLib::Monkeyuser qw (Monkeyuser);
+use BotLib::Util qw (trim utf2sha1);
+use BotLib::Weather qw (Weather);
+use BotLib::Xkcd qw (Xkcd);
 
 use version; our $VERSION = qw (1.0);
-use Exporter qw(import);
-our @EXPORT_OK = qw(command randomCommonPhrase realjid);
+use Exporter qw (import);
+our @EXPORT_OK = qw (Command RandomCommonPhrase RealJID);
 
-my $c = loadConf ();
+my $c = LoadConf ();
 
-sub randomCommonPhrase () {
+sub RandomCommonPhrase () {
 	my @myphrase = (
 		'Так, блядь...',
 		'*Закатывает рукава* И ради этого ты меня позвал?',
@@ -50,11 +48,11 @@ sub randomCommonPhrase () {
 	return $myphrase[irand ($#myphrase + 1)];
 }
 
-sub command {
+sub Command {
 	my %hash = @_;
 	my $bot = $hash{bot_object};
 	my $text = $hash{body};
-	my %jid = realjid (%hash);
+	my %jid = RealJID (%hash);
 	my $chattername = $jid{'name'};
 	my $chatid;
 
@@ -180,7 +178,7 @@ sub command {
 		$reply = '/me наливает абсент в стопку. Смочив кубик сахара в абсенте кладёт его на дырявую ложечку и пожигает. Как только пламя потухнет, ' . $bot->{'alias'} . ' размешивает оплавившийся кубик в абсенте и подносит стопку ' . $target . '.';
 	} elsif (substr ($text, 1, 2) eq 'w '  ||  substr ($text, 1, 2) eq 'п ') {
 		my $city = substr $text, 2;
-		$reply = weather ($city) =~ tr/\n/ /r;
+		$reply = Weather ($city) =~ tr/\n/ /r;
 	} elsif (substr ($text, 1) eq 'version'  ||  substr ($text, 1) eq 'ver') {
 		$reply = 'Версия нуль.чего-то_там.чего-то_там';
 	} elsif (substr ($text, 1) eq 'help'  ||  substr ($text, 1) eq 'помощь') {
@@ -214,27 +212,27 @@ ${csign}xkcd                     - комикс-стрип с xkcb.ru
 EOL
 
 	} elsif (substr ($text, 1) eq 'lat'  ||  substr ($text, 1) eq 'лат') {
-		$reply = latAnswer ();
+		$reply = Lat ();
 	} elsif (substr ($text, 1) eq 'cat'  ||  substr ($text, 1) eq 'кис') {
-		$reply = kitty ();
+		$reply = Kitty ();
 	} elsif (substr ($text, 1) eq 'fox'  ||  substr ($text, 1) eq 'лис') {
-		$reply = fox ();
+		$reply = Fox ();
 	} elsif (substr ($text, 1) eq 'dig'  ||  substr ($text, 1) eq 'копать') {
-		$reply = dig ($chattername);
+		$reply = Dig ($chattername);
 	} elsif (substr ($text, 1) eq 'fish'  ||  substr ($text, 1) eq 'fisher'  ||  substr ($text, 1) eq 'рыба'  ||  substr ($text, 1) eq 'рыбка'  ||  substr ($text, 1) eq 'рыбалка') {
-		$reply = fish ($chattername);
+		$reply = Fish ($chattername);
 	} elsif (substr ($text, 1) eq 'buni') {
-		$reply = buni ();
+		$reply = Buni ();
 	} elsif (substr ($text, 1) eq 'xkcd') {
-		$reply = xkcd ();
+		$reply = Xkcd ();
 	} elsif (substr ($text, 1) eq 'monkeyuser') {
-		$reply = monkeyuser ();
+		$reply = Monkeyuser ();
 	} elsif (substr ($text, 1) eq 'drink' || substr ($text, 1) eq 'праздник') {
-		$reply = drink ();
+		$reply = Drink ();
 	} elsif (substr ($text, 1) eq 'bunny' || substr ($text, 1) eq 'rabbit' || substr ($text, 1) eq 'кролик') {
-		$reply = rabbit ();
+		$reply = Rabbit ();
 	} elsif (substr ($text, 1) eq 'owl' || substr ($text, 1) eq 'сова') {
-		$reply = owl ();
+		$reply = Owl ();
 	} elsif ((length ($text) >= 6 && (substr ($text, 1, 6) eq 'karma ' || substr ($text, 1, 6) eq 'карма '))  ||  substr ($text, 1) eq 'karma'  ||  substr ($text, 1) eq 'карма') {
 		my $mytext = '';
 
@@ -246,11 +244,11 @@ EOL
 			$mytext = '';
 		}
 
-		$reply = karmaGet ($chatid, $mytext);
+		$reply = KarmaGet ($chatid, $mytext);
 	} elsif (substr ($text, 1) eq 'friday'  ||  substr ($text, 1) eq 'пятница') {
-		$reply = friday ();
+		$reply = Friday ();
 	} elsif (substr ($text, 1) eq 'fortune'  ||  substr ($text, 1) eq 'фортунка'  ||  substr ($text, 1) eq 'f'  ||  substr ($text, 1) eq 'ф') {
-		my $phrase = fortune ();
+		my $phrase = Fortune ();
 		# workaround Net::Jabber::Bot outgoing message ![:print:] replacement
 		$phrase =~ s/\s\s+\-\-/\n \-\-/xmsg;
 		$reply = $phrase;
@@ -269,15 +267,13 @@ EOL
 		$reply = ':)';
 	} elsif (substr ($text, 1) eq '=)' || substr ($text, 1) eq ':)' || substr ($text, 1) eq '(:') {
 		$reply = ':D';
-	} elsif (substr ($text, 1, 11) eq '#/bin/bash' || substr ($text, 1, 9) eq '#/bin/sh' || substr ($text, 1, 14) eq '#/usr/bin/env') {
-		$reply = 'Кажется, вы ошиблись окном, это не паста.';
 	}
 
 	return $reply;
 }
 
 # in this particular case real jid is really hidden :) and i hope that i found where it is hiding.
-sub realjid {
+sub RealJID {
 	my %hash = @_;
 	my $bot = $hash{'bot_object'};
 	my $myjid = $hash{'from_full'}; # in case of real jid myjid is name@server/resource in case of "groupchat" jid it is group@conf_server/name

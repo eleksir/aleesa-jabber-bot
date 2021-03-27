@@ -5,6 +5,7 @@ data/*.sqlite
 data/cache/**
 data/fortune/**
 data/friday/**
+data/image/**
 data/karma/**
 data/lat/**
 TODO
