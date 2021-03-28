@@ -1,4 +1,6 @@
 {
+# all cached will go there, they named after module name
+    "cachedir" : "data/cache",
     "user" : "nobody",
     "jabberbot": {
 # maybe onece it will be multi-instance of bot
@@ -24,8 +26,6 @@
         }
     },
     "openweathermap" : {
-        "cachetime": "data/cache/openweathermap.Id-Timestamp.db",
-        "cachedata": "data/cache/openweathermap.Id-Data.db",
         "appid": "get_it_on_openweathermap.org"
     },
     "log" : "/var/log/aleesa-jabber-bot/aleesa-jabber-bot.log",

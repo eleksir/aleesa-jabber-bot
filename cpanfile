@@ -1,4 +1,7 @@
+requires 'CHI';
+requires 'CHI::Driver::BerkeleyDB';
 requires 'Cwd::utf8';
+requires 'DateTime';
 requires 'DB_File';
 requires 'SQLite_File';
 requires 'Digest::MD5';
