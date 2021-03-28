@@ -43,7 +43,7 @@ sub mknonce {
 	return $nonce;
 }
 
-sub flickerSignReq {
+sub flickrSignReq {
 	my %p = @_;
 	my $string;
 	my $hmac;
@@ -105,7 +105,7 @@ sub flickrRequestToken {
 	my $oauth_timestamp = time ();
 	my $oauth_nonce = mknonce ();
 
-	my $oauth_signature = flickerSignReq (
+	my $oauth_signature = flickrSignReq (
 		type => 'request_token',
 		oauth_timestamp => $oauth_timestamp,
 		oauth_nonce => $oauth_nonce
@@ -142,7 +142,7 @@ sub flickrAccessToken {
 	my $oauth_timestamp = time ();
 	my $oauth_nonce = mknonce ();
 
-	my $oauth_signature = flickerSignReq (
+	my $oauth_signature = flickrSignReq (
 		type => 'access_token',
 		oauth_timestamp => $oauth_timestamp,
 		oauth_nonce => $oauth_nonce,
@@ -201,7 +201,7 @@ sub flickrTestLogin {
 	my $oauth_timestamp = time ();
 	my $oauth_nonce = mknonce ();
 
-	my $oauth_signature = flickerSignReq (
+	my $oauth_signature = flickrSignReq (
 		nojsoncallback => 1,
 		oauth_nonce => $oauth_nonce,
 		format => 'json',
@@ -254,7 +254,7 @@ sub flickrSearchByText {
 	my $oauth_timestamp = time ();
 	my $oauth_nonce = mknonce ();
 
-	my $oauth_signature = flickerSignReq (
+	my $oauth_signature = flickrSignReq (
 		nojsoncallback => 1,
 		oauth_nonce => $oauth_nonce,
 		format => 'json',
@@ -293,10 +293,10 @@ sub flickrSearchByText {
 
 		if (defined $response) {
 			# lets make another query, this time with random picture
-			my $page = irand int ($response->{photos}->{total} / 500);
+			my $page = irand (int $response->{photos}->{total} / 500);
 			$oauth_timestamp = time ();
 			$oauth_nonce = mknonce ();
-			$oauth_signature = flickerSignReq (
+			$oauth_signature = flickrSignReq (
 				nojsoncallback => 1,
 				oauth_nonce => $oauth_nonce,
 				format => 'json',
@@ -363,7 +363,7 @@ sub flickrSearchByTags {
 	my $oauth_timestamp = time ();
 	my $oauth_nonce = mknonce ();
 
-	my $oauth_signature = flickerSignReq (
+	my $oauth_signature = flickrSignReq (
 		nojsoncallback => 1,
 		oauth_nonce => $oauth_nonce,
 		format => 'json',
@@ -405,7 +405,7 @@ sub flickrSearchByTags {
 			my $page = irand int ($response->{photos}->{total} / 500);
 			$oauth_timestamp = time ();
 			$oauth_nonce = mknonce ();
-			$oauth_signature = flickerSignReq (
+			$oauth_signature = flickrSignReq (
 				nojsoncallback => 1,
 				oauth_nonce => $oauth_nonce,
 				format => 'json',
@@ -582,7 +582,7 @@ sub FlickrByTags {
 
 	if ($result) {
 		if (defined ($result->{photos}) && defined ($result->{photos}->{photo})) {
-			my $item = irand int(@{$result->{photos}->{photo}});
+			my $item = irand int @{$result->{photos}->{photo}};
 			$item = ${$result->{photos}->{photo}}[$item];
 			$item = sprintf 'https://live.staticflickr.com/%s/%s_%s_z.jpg', $item->{server}, $item->{id}, $item->{secret};
 			return $item;
@@ -623,7 +623,7 @@ sub FlickrByText {
 
 	if ($result) {
 		if (defined ($result->{photos}) && defined ($result->{photos}->{photo})) {
-			my $item = irand int(@{$result->{photos}->{photo}});
+			my $item = irand (int (@{$result->{photos}->{photo}}));
 			$item = ${$result->{photos}->{photo}}[$item];
 			$item = sprintf 'https://live.staticflickr.com/%s/%s_%s_z.jpg', $item->{server}, $item->{id}, $item->{secret};
 			return $item;

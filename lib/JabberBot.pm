@@ -9,7 +9,7 @@ use warnings;
 use utf8;
 use open qw (:std :utf8);
 use English qw ( -no_match_vars );
-use Carp qw(carp);
+use Carp qw (carp);
 use File::Path qw (make_path);
 use Hailo;
 use Net::Jabber::Bot;
@@ -145,7 +145,8 @@ sub RunJabberBot {
 		tls => 1,
 		ssl_verify => 0,
 		username => $c->{jabberbot}->{aleesa}->{authname},
-# threre is some nasty bug in module, so we have to set from_full explicitly
+
+		# threre is some nasty bug in module, so we have to set from_full explicitly
 		from_full => sprintf (
 			'%s@%s/%s',
 			$c->{jabberbot}->{aleesa}->{room},

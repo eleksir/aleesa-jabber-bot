@@ -43,27 +43,27 @@ sub Drink {
 
 		if ($r->{success}) {
 			# TODO: Handle unexpected content
-			my $p = HTML::TokeParser->new(\$r->{content});
+			my $p = HTML::TokeParser->new (\$r->{content});
 			my @a;
-			my @holyday;
+			my @holiday;
 
 			do {
 				$#a = -1;
-				@a = $p->get_tag('span'); ## no critic (Variables::RequireLocalizedPunctuationVars)
+				@a = $p->get_tag ('span'); ## no critic (Variables::RequireLocalizedPunctuationVars)
 
 				if ($#{$a[0]} > 2 && defined $a[0][1]->{itemprop} && $a[0][1]->{itemprop} eq 'text') {
-					push @holyday,'* ' . decode ('UTF-8', $p->get_trimmed_text ('/span'));
+					push @holiday,'* ' . decode ('UTF-8', $p->get_trimmed_text ('/span'));
 				}
 
 			} while ($#{$a[0]} > 1);
 
-			if ($#holyday > 0) {
+			if ($#holiday > 0) {
 				# cut off something weird, definely not a "holyday"
-				$#holyday = $#holyday - 1;
+				$#holiday = $#holiday - 1;
 			}
 
-			if ($#holyday > 0) {
-				$ret = join "\n", @holyday;
+			if ($#holiday > 0) {
+				$ret = join "\n", @holiday;
 			}
 		} else {
 			cluck sprintf 'Server return status %s with message: %s', $r->{status}, $r->{reason};

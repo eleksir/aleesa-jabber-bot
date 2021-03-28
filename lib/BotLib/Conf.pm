@@ -5,13 +5,13 @@ use 5.018;
 use strict;
 use warnings;
 use utf8;
-use open qw(:std :utf8);
-use English qw( -no_match_vars );
+use open qw (:std :utf8);
+use English qw ( -no_match_vars );
 use JSON::XS;
 
 use version; our $VERSION = qw (1.0);
-use Exporter qw(import);
-our @EXPORT_OK = qw(LoadConf);
+use Exporter qw (import);
+our @EXPORT_OK = qw (LoadConf);
 
 sub LoadConf {
 	my $c = 'data/config.json';

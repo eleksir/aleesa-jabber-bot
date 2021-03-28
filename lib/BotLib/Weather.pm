@@ -59,7 +59,7 @@ sub Weather {
 				decode_json ($r->{content});
 			};
 
-			if ($EVAL_ERROR) {
+			unless (defined $fc) {
 				carp "[WARN] openweathermap returns corrupted json: $EVAL_ERROR";
 				return undef;
 			};

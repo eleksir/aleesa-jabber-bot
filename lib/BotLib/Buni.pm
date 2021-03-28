@@ -37,7 +37,7 @@ sub Buni {
 		{
 			do {
 				$#a = -1;
-				@a = $p->get_tag('meta'); ## no critic (Variables::RequireLocalizedPunctuationVars)
+				@a = $p->get_tag ('meta'); ## no critic (Variables::RequireLocalizedPunctuationVars)
 
 				if (defined $a[0][1]->{property} && $a[0][1]->{property} eq 'og:image') {
 					$ret = $a[0][1]->{content};

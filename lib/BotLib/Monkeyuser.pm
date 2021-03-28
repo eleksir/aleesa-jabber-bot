@@ -37,7 +37,7 @@ sub Monkeyuser {
 
 		do {
 			$#a = -1;
-			@a = $p->get_tag('a'); ## no critic (Variables::RequireLocalizedPunctuationVars)
+			@a = $p->get_tag ('a'); ## no critic (Variables::RequireLocalizedPunctuationVars)
 
 			if (defined $a[0][1]->{class} && $a[0][1]->{class} eq 'lazyload small-image') {
 				if (defined $a[0][1]->{'data-src'} && ($a[0][1]->{'data-src'} !~ /adlitteram/)) {
@@ -48,7 +48,7 @@ sub Monkeyuser {
 		} while ($#{$a[0]} > 1);
 
 		if ($#link > 0) {
-			$ret = sprintf 'https://www.monkeyuser.com%s', $link [irand (1 + $#link)];
+			$ret = sprintf 'https://www.monkeyuser.com%s', $link[irand (1 + $#link)];
 		}
 	} else {
 		cluck sprintf 'Server return status %s with message: %s', $r->{status}, $r->{reason};

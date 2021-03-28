@@ -34,7 +34,7 @@ sub Kitty {
 			decode_json ($r->{content})
 		};
 
-		if ($EVAL_ERROR) {
+		unless (defined $jcat) {
 			carp "[ERROR] Unable to decode JSON: $EVAL_ERROR";
 		} else {
 			if ($jcat->[0]->{url}) {
