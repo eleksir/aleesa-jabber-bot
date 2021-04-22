@@ -13,10 +13,25 @@ our @EXPORT_OK = qw (Xkcd);
 
 sub Xkcd {
 	my $http = HTTP::Tiny->new (timeout => 5, max_redirect => 0);
-	my $r = $http->get ('https://xkcd.ru/random/');
+	my $location;
+	my $status = 400;
+	my $c = 0;
 
-	if (defined $r->{headers} && defined $r->{headers}->{location} && $r->{headers}->{location} ne '') {
-		return sprintf 'https://xkcd.ru/i/%s_v1.png', substr ($r->{headers}->{location}, 1, -1);
+	do {
+		my $r = $http->get ('https://xkcd.ru/random/');
+
+		if (defined $r->{headers} && defined $r->{headers}->{location} && $r->{headers}->{location} ne '') {
+			$location = substr ($r->{headers}->{location}, 1, -1);
+			$location = sprintf 'https://xkcd.ru/i/%s_v1.png', $location;
+			$r = $http->head ($location);
+		}
+
+		$c++;
+		$status = $r->{status};
+	} while ($c < 3 || $status >= 404);
+
+	if ($status == 200) {
+		return $location;
 	}
 
 	return 'Комикс-стрип нарисовать не так-то просто :(';
