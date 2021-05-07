@@ -6,9 +6,9 @@ use warnings;
 use utf8;
 use open qw (:std :utf8);
 use English qw ( -no_match_vars );
-use Carp qw (carp);
 use JSON::XS;
 use HTTP::Tiny;
+use Log::Any qw ($log);
 
 use version; our $VERSION = qw (1.0);
 use Exporter qw (import);
@@ -35,7 +35,7 @@ sub Fox {
 		};
 
 		unless (defined $jfox) {
-			carp "[ERROR] Unable to decode JSON: $EVAL_ERROR";
+			$log->warn ("[WARN] Unable to decode JSON: $EVAL_ERROR");
 		} else {
 			if ($jfox->{image}) {
 				$jfox->{image} =~ s/\\//xmsg;
@@ -43,7 +43,7 @@ sub Fox {
 			}
 		}
 	} else {
-		carp sprintf 'Server return status %s with message: %s', $r->{status}, $r->{reason};
+		$log->warn (sprintf '[WARN] Server return status %s with message: %s', $r->{status}, $r->{reason});
 	}
 
 	return $ret;

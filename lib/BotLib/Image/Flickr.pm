@@ -11,6 +11,7 @@ use Digest::HMAC_SHA1 qw (hmac_sha1);
 use File::Path qw (make_path);
 use JSON::XS;
 use HTTP::Tiny;
+use Log::Any qw ($log);
 use Math::Random::Secure qw (irand);
 use MIME::Base64;
 use SQLite_File;
@@ -338,19 +339,19 @@ sub flickrSearchByText {
 				if (defined $response) {
 					return $response;
 				} else {
-					cluck "Flickr api returns incorrect json: $r->{content}";
+					$log->warn ("[WARN] Flickr api returns incorrect json: $r->{content}");
 					return undef;
 				}
 			} else {
-				cluck "Flickr api returns incorrect json: $r->{content}";
+				$log->warn ("[WARN] Flickr api returns incorrect json: $r->{content}");
 				return undef;
 			}
 		} else {
-			cluck "Flickr api returns incorrect json: $r->{content}";
+			$log->warn ("[WARN] Flickr api returns incorrect json: $r->{content}");
 			return undef;
 		}
 	} else {
-		cluck "HTTP status code not 200: $r->{status}, $r->{content}";
+		$log->warn ("[WARN] HTTP status code not 200: $r->{status}, $r->{content}");
 		return undef;
 	}
 }
@@ -447,19 +448,19 @@ sub flickrSearchByTags {
 				if (defined $response) {
 					return $response;
 				} else {
-					cluck "Flickr api returns incorrect json: $r->{content}";
+					$log->warn ("[WARN] Flickr api returns incorrect json: $r->{content}");
 					return undef;
 				}
 			} else {
-				cluck "Flickr api returns incorrect json: $r->{content}";
+				$log->warn ("[WARN] Flickr api returns incorrect json: $r->{content}");
 				return undef;
 			}
 		} else {
-			cluck "Flickr api returns incorrect json: $r->{content}";
+			$log->warn ("[WARN] Flickr api returns incorrect json: $r->{content}");
 			return undef;
 		}
 	} else {
-		cluck "HTTP status code not 200: $r->{status}, $r>{contenr}";
+		$log->warn ("[WARN] HTTP status code not 200: $r->{status}, $r>{content}");
 		return undef;
 	}
 }
@@ -539,7 +540,7 @@ sub FlickrTestLogin {
 	}
 
 	tie my %secret, 'SQLite_File', $backingfile  ||  do {
-		say "[ERROR] Unable to tie to $backingfile: $OS_ERROR"; ## no critic (InputOutput::RequireCheckedSyscalls)
+		say "Unable to tie to $backingfile: $OS_ERROR"; ## no critic (InputOutput::RequireCheckedSyscalls)
 		return 0;
 	};
 
@@ -560,13 +561,13 @@ sub FlickrByTags {
 
 	unless (-d $dir) {
 		make_path ($dir) or do {
-			say "Unable to create $dir: $OS_ERROR"; ## no critic (InputOutput::RequireCheckedSyscalls)
+			$log->error ("[ERROR] Unable to create $dir: $OS_ERROR");
 			return 0;
 		};
 	}
 
 	tie my %secret, 'SQLite_File', $backingfile  ||  do {
-		say "[ERROR] Unable to tie to $backingfile: $OS_ERROR"; ## no critic (InputOutput::RequireCheckedSyscalls)
+		$log->error ("[ERROR] Unable to tie to $backingfile: $OS_ERROR");
 		return 0;
 	};
 
@@ -587,7 +588,7 @@ sub FlickrByTags {
 			$item = sprintf 'https://live.staticflickr.com/%s/%s_%s_z.jpg', $item->{server}, $item->{id}, $item->{secret};
 			return $item;
 		} else {
-			cluck 'Flickr api returns empty search result list';
+			$log->notice ('[NOTICE] Flickr api returns empty search result list');
 			return;
 		}
 	} else {
@@ -601,13 +602,13 @@ sub FlickrByText {
 
 	unless (-d $dir) {
 		make_path ($dir) or do {
-			say "Unable to create $dir: $OS_ERROR"; ## no critic (InputOutput::RequireCheckedSyscalls)
+			$log->error ("[ERROR] Unable to create $dir: $OS_ERROR");
 			return 0;
 		};
 	}
 
 	tie my %secret, 'SQLite_File', $backingfile  ||  do {
-		say "[ERROR] Unable to tie to $backingfile: $OS_ERROR"; ## no critic (InputOutput::RequireCheckedSyscalls)
+		$log->error ("[ERROR] Unable to tie to $backingfile: $OS_ERROR");
 		return 0;
 	};
 
@@ -628,7 +629,7 @@ sub FlickrByText {
 			$item = sprintf 'https://live.staticflickr.com/%s/%s_%s_z.jpg', $item->{server}, $item->{id}, $item->{secret};
 			return $item;
 		} else {
-			cluck 'Flickr api returns empty search result list';
+			$log->notice ('[NOTICE] Flickr api returns empty search result list');
 			return;
 		}
 	} else {

@@ -16,7 +16,7 @@ use BotLib::Fisher qw (Fish);
 use BotLib::Fortune qw (Fortune);
 use BotLib::Fox qw (Fox);
 use BotLib::Friday qw (Friday);
-use BotLib::Image qw (Rabbit Owl);
+use BotLib::Image qw (Rabbit Owl Frog Horse Snail);
 use BotLib::Karma qw (KarmaGet);
 use BotLib::Kitty qw (Kitty);
 use BotLib::Lat qw (Lat);
@@ -184,31 +184,34 @@ sub Command {
 	} elsif (substr ($text, 1) eq 'help'  ||  substr ($text, 1) eq 'помощь') {
 		$reply = <<"EOL";
 
-${csign}help | ${csign}помощь           - это сообщение
-${csign}buni                     - комикс-стрип hapi buni
-${csign}bunny                    - кролик
-${csign}rabbit | ${csign}кролик         - кролик
-${csign}cat | ${csign}кис               - кошечка
-${csign}dig | ${csign}копать            - заняться археологией
-${csign}drink | ${csign}праздник        - какой сегодня праздник?
-${csign}fish | ${csign}fisher           - порыбачить
-${csign}рыба | ${csign}рыбка | ${csign}рыбалка - порыбачить
-${csign}f | ${csign}ф                   - рандомная фраза из сборника цитат fortune_mod
-${csign}fortune | ${csign}фортунка      - рандомная фраза из сборника цитат fortune_mod
-${csign}fox | ${csign}лис               - лисичка
-${csign}friday | ${csign}пятница        - а не пятница ли сегодня?
-${csign}karma фраза              - посмотреть карму фразы
-${csign}карма фраза              - посмотреть карму фразы
-фраза++ | фраза--         - повысить или понизить карму фразы
-${csign}lat | ${csign}лат               - сгенерировать фразу из крылатого латинского выражения
-${csign}monkeyuser               - комикс-стрип MonkeyUser
-${csign}owl | ${csign}сова              - сова
-${csign}ping | ${csign}пинг             - попинговать бота
-${csign}some_brew                - выдать соответствующий напиток, бармен может налить rum, ром, vodka, водку, beer, пиво, tequila, текила, whisky, виски, absinthe, абсент
-${csign}ver | ${csign}version           - написать что-то про версию ПО
-${csign}версия                   - написать что-то про версию ПО
-${csign}w город | ${csign}п город       - погода в городе
-${csign}xkcd                     - комикс-стрип с xkcb.ru
+${csign}help | ${csign}помощь             - это сообщение
+${csign}buni                       - комикс-стрип hapi buni
+${csign}bunny                      - кролик
+${csign}rabbit | ${csign}кролик           - кролик
+${csign}cat | ${csign}кис                 - кошечка
+${csign}dig | ${csign}копать              - заняться археологией
+${csign}drink | ${csign}праздник          - какой сегодня праздник?
+${csign}fish | ${csign}fisher             - порыбачить
+${csign}рыба | ${csign}рыбка | ${csign}рыбалка   - порыбачить
+${csign}f | ${csign}ф                     - рандомная фраза из сборника цитат fortune_mod
+${csign}fortune | ${csign}фортунка        - рандомная фраза из сборника цитат fortune_mod
+${csign}fox | ${csign}лис                 - лисичка
+${csign}friday | ${csign}пятница          - а не пятница ли сегодня?
+${csign}frog | ${csign}лягушка            - лягушка
+${csign}horse | ${csign}лошадь | ${csign}лошадка - лошадка
+${csign}karma фраза                - посмотреть карму фразы
+${csign}карма фраза                - посмотреть карму фразы
+фраза++ | фраза--           - повысить или понизить карму фразы
+${csign}lat | ${csign}лат                 - сгенерировать фразу из крылатого латинского выражения
+${csign}monkeyuser                 - комикс-стрип MonkeyUser
+${csign}owl | ${csign}сова                - сова
+${csign}ping | ${csign}пинг               - попинговать бота
+${csign}snail | ${csign}улитк а           - улитка
+${csign}some_brew                  - выдать соответствующий напиток, бармен может налить rum, ром, vodka, водку, beer, пиво, tequila, текила, whisky, виски, absinthe, абсент
+${csign}ver | ${csign}version             - написать что-то про версию ПО
+${csign}версия                     - написать что-то про версию ПО
+${csign}w город | ${csign}п город         - погода в городе
+${csign}xkcd                       - комикс-стрип с xkcb.ru
 EOL
 
 	} elsif (substr ($text, 1) eq 'lat'  ||  substr ($text, 1) eq 'лат') {
@@ -217,6 +220,12 @@ EOL
 		$reply = Kitty ();
 	} elsif (substr ($text, 1) eq 'fox'  ||  substr ($text, 1) eq 'лис') {
 		$reply = Fox ();
+	} elsif (substr ($text, 1) eq 'frog'  ||  substr ($text, 1) eq 'лягушка') {
+		$reply = Frog ();
+	} elsif (substr ($text, 1) eq 'horse'  ||  substr ($text, 1) eq 'лошадь'  || substr ($text, 1) eq 'лошадка') {
+		$reply = Horse ();
+	} elsif (substr ($text, 1) eq 'snail'  ||  substr ($text, 1) eq 'улитка') {
+		$reply = Snail ();
 	} elsif (substr ($text, 1) eq 'dig'  ||  substr ($text, 1) eq 'копать') {
 		$reply = Dig ($chattername);
 	} elsif (substr ($text, 1) eq 'fish'  ||  substr ($text, 1) eq 'fisher'  ||  substr ($text, 1) eq 'рыба'  ||  substr ($text, 1) eq 'рыбка'  ||  substr ($text, 1) eq 'рыбалка') {

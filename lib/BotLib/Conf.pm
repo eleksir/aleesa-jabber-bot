@@ -8,6 +8,7 @@ use utf8;
 use open qw (:std :utf8);
 use English qw ( -no_match_vars );
 use JSON::XS;
+use Log::Any qw ($log);
 
 use version; our $VERSION = qw (1.0);
 use Exporter qw (import);
@@ -22,12 +23,12 @@ sub LoadConf {
 
 	unless ($readlen) {
 		close $CH;                                   ## no critic (InputOutput::RequireCheckedSyscalls
-		die "[FATA] Unable to read $c: $OS_ERROR\n";
+		$log->fata ("[FATA] Unable to read $c: $OS_ERROR");
 	}
 
 	if ($readlen != $len) {
 		close $CH;                                   ## no critic (InputOutput::RequireCheckedSyscalls
-		die "[FATA] File $c is $len bytes on disk, but we read only $readlen bytes\n";
+		$log->fata ("[FATA] File $c is $len bytes on disk, but we read only $readlen bytes");
 	}
 
 	close $CH;                                       ## no critic (InputOutput::RequireCheckedSyscalls

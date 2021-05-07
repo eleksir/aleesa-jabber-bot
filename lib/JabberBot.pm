@@ -9,9 +9,9 @@ use warnings;
 use utf8;
 use open qw (:std :utf8);
 use English qw ( -no_match_vars );
-use Carp qw (carp);
 use File::Path qw (make_path);
 use Hailo;
+use Log::Any qw ($log);
 use Net::Jabber::Bot;
 use BotLib qw (Command RandomCommonPhrase RealJID);
 use BotLib::Conf qw (LoadConf);
@@ -68,7 +68,7 @@ sub __new_bot_message {
 
 		unless (-d $braindir) {
 			make_path ($braindir) or do {
-				carp "[ERROR] Unable to create $braindir: $OS_ERROR";
+				$log->error ("[ERROR] Unable to create $braindir: $OS_ERROR");
 				return;
 			};
 		}
@@ -79,9 +79,9 @@ sub __new_bot_message {
 		);
 
 		if ($hash{'type'} eq 'groupchat') {
-			carp "[INFO] Initialized brain for chat $hash{'reply_to'}: $brainname";
+			$log->info ("[INFO] Initialized brain for chat $hash{'reply_to'}: $brainname");
 		} else {
-			carp "[INFO] Initialized brain for chat $jid{'jid'}: $brainname";
+			$log->info ("[INFO] Initialized brain for chat $jid{'jid'}: $brainname");
 		}
 	}
 

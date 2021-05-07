@@ -29,6 +29,7 @@ use Cwd::utf8 qw (chdir abs_path);
 use POSIX qw (setgid setuid setsid);
 use File::Path qw (make_path);
 use File::Basename qw (basename dirname);
+use Log::Any qw ($log);
 use Log::Any::Adapter;
 use Log::Any::For::Std;
 use BotLib::Conf qw (LoadConf);
@@ -43,6 +44,7 @@ my $runAsUid = $UID;
 
 my $piddir = '/var/run/' . basename (abs_path $PROGRAM_NAME);
 my $C = LoadConf ();
+my $loglevel = $C->{'loglevel'} // 'notice';
 my $logfile;
 
 if (defined $C->{'log'}) {
@@ -88,7 +90,19 @@ if ($UID == 0) {
 
 if (defined $logfile) {
 	# loglevel warning suppresses logging from CHI.
-	Log::Any::Adapter->set ('File', $logfile, 'log_level'=>'warning');
+	Log::Any::Adapter->set ('File', $logfile, log_level => $loglevel);
+
+	# Some annoying CHI logging events come with category set to CHI::Driver and log_level set to debug.
+	# Until we use start using Log::Any native features and set whole loglevel accordingly, lets lower
+	# verbosity paticulary for CHI.
+	Log::Any::Adapter->set (
+		{
+			category => 'CHI::Driver'
+		},
+		'File',
+		$logfile,
+		log_level => 'warn'
+	);
 } else {
 	# no log defined so set loglevel to the least verbose
 	Log::Any::Adapter->set ('File', '/dev/null', 'log_level'=>'emergency');
@@ -101,14 +115,24 @@ daemonize ();
 my $apath = abs_path $PROGRAM_NAME;
 
 unless (defined $apath) {
-	die "Unable to get abs_path: $OS_ERROR\n";
+	$log->fatal ("[FATAL] Unable to get abs_path: $OS_ERROR");
+	exit 1;
 }
 
 my $pidfile = sprintf '%s/%s.pid', $piddir, basename $apath;
-warn "Creating pidfile at $pidfile\n";
-open (my $pid, '>', $pidfile) or die "Error opening $pidfile: $OS_ERROR\n";
-print $pid $PID or die "Error writing to $pidfile: $OS_ERROR\n";
-close $pid;  ## no critic (InputOutput::RequireCheckedSyscalls)
+$log->info ("[INFO] Creating pidfile at $pidfile");
+
+open (my $pid, '>', $pidfile) or do {
+	$log->fatal ("[FATAL] Error opening $pidfile: $OS_ERROR");
+	exit 1;
+};
+
+print $pid $PID or do {
+	$log->fatal ("[FATAL] Error writing to $pidfile: $OS_ERROR");
+	exit 1;
+};
+
+close $pid;                              ## no critic (InputOutput::RequireCheckedSyscalls)
 
 local $SIG{INT}  = \&__signal_handler;
 local $SIG{TERM} = \&__signal_handler;
@@ -140,18 +164,19 @@ sub __fork () {
 	my $pid = fork;
 
 	unless (defined $pid) {
-		die "Can't fork: $OS_ERROR\n";
+		$log->fatal ("[FATAL] Can't fork: $OS_ERROR");
+		exit 1;
 	}
 
 	if ($pid != 0) {
-		exit;
+		exit 0;
 	}
 
 	return;
 }
 
 sub __signal_handler ($) {
-	warn "Caught a signal $OS_ERROR\n";
+	$log->info ("[INFO] Caught a signal $OS_ERROR");
 
 	if (-f $pidfile) {
 		unlink $pidfile;

@@ -6,9 +6,9 @@ use warnings;
 use utf8;
 use open qw (:std :utf8);
 use English qw ( -no_match_vars );
-use Carp qw (carp);
 use DB_File;
 use File::Path qw (make_path);
+use Log::Any qw ($log);
 use BotLib::Conf qw (LoadConf);
 use BotLib::Util qw (utf2sha1 trim);
 
@@ -34,14 +34,14 @@ sub KarmaSet (@) {
 
 	unless (-d $karmadir) {
 		make_path ($karmadir) or do {
-			carp "Unable to create $karmadir: $OS_ERROR";
+			$log->error ("[ERROR] Unable to create $karmadir: $OS_ERROR");
 			return sprintf 'Карма %s составляет 0', $phrase;
 		};
 	}
 
 	# init hash, store phrase and score
 	tie my %karma, 'DB_File', $karmafile || do {
-		carp "[ERROR] Something nasty happen when karma ties to its data: $OS_ERROR";
+		$log->error ("[ERROR] Something nasty happen when karma ties to its data: $OS_ERROR");
 		return sprintf 'Карма %s составляет 0', $phrase;
 	};
 
@@ -94,14 +94,14 @@ sub KarmaGet (@) {
 
 	unless (-d $karmadir) {
 		make_path ($karmadir) or do {
-			carp "Unable to create $karmadir: $OS_ERROR";
+			$log->error ("Unable to create $karmadir: $OS_ERROR");
 			return sprintf 'Карма %s составляет 0', $phrase;
 		};
 	}
 
 	# init hash, store phrase and score
 	tie my %karma, 'DB_File', $karmafile || do {
-		carp "[ERROR] Something nasty happen when karma ties to its data: $OS_ERROR";
+		$log->error ("[ERROR] Something nasty happen when karma ties to its data: $OS_ERROR");
 		return sprintf 'Карма %s составляет 0', $phrase;
 	};
 

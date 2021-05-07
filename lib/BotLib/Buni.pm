@@ -6,9 +6,9 @@ use warnings;
 use utf8;
 use open qw (:std :utf8);
 use English qw ( -no_match_vars );
-use Carp qw (cluck);
 use HTTP::Tiny;
 use HTML::TokeParser;
+use Log::Any qw ($log);
 
 use version; our $VERSION = qw (1.0);
 use Exporter qw (import);
@@ -47,7 +47,7 @@ sub Buni {
 			} while ($#{$a[0]} > 1);
 		}
 	} else {
-		cluck sprintf 'Server return status %s with message: %s', $r->{status}, $r->{reason};
+		$log->warn (sprintf '[WARN] Server return status %s with message: %s', $r->{status}, $r->{reason});
 	}
 
 	return $ret;

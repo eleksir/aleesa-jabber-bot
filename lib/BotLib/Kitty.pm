@@ -6,9 +6,9 @@ use warnings;
 use utf8;
 use open qw (:std :utf8);
 use English qw ( -no_match_vars );
-use Carp qw (carp);
 use JSON::XS;
 use HTTP::Tiny;
+use Log::Any qw ($log);
 
 use version; our $VERSION = qw (1.0);
 use Exporter qw (import);
@@ -35,14 +35,14 @@ sub Kitty {
 		};
 
 		unless (defined $jcat) {
-			carp "[ERROR] Unable to decode JSON: $EVAL_ERROR";
+			$log->error ("[ERROR] Unable to decode JSON: $EVAL_ERROR");
 		} else {
 			if ($jcat->[0]->{url}) {
 				$ret = $jcat->[0]->{url};
 			}
 		}
 	} else {
-		carp sprintf 'Server return status %s with message: %s', $r->{status}, $r->{reason};
+		$log->error (sprintf 'Server return status %s with message: %s', $r->{status}, $r->{reason});
 	}
 
 	return $ret;

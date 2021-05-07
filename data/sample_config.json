@@ -29,6 +29,7 @@
         "appid": "get_it_on_openweathermap.org"
     },
     "log" : "/var/log/aleesa-jabber-bot/aleesa-jabber-bot.log",
+    "loglevel": "info",
     "lat" : {
         "brain" : "data/lat/brain.sqlite",
         "src" : "lat.txt"
