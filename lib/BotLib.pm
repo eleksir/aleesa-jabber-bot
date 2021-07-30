@@ -8,6 +8,7 @@ use open qw (:std :utf8);
 use English qw ( -no_match_vars );
 use Carp qw (carp);
 use Math::Random::Secure qw (irand);
+use BotLib::Anek qw (Anek);
 use BotLib::Archeologist qw (Dig);
 use BotLib::Buni qw (Buni);
 use BotLib::Conf qw (LoadConf);
@@ -179,12 +180,15 @@ sub Command {
 	} elsif (substr ($text, 1, 2) eq 'w '  ||  substr ($text, 1, 2) eq 'п ') {
 		my $city = substr $text, 2;
 		$reply = Weather ($city) =~ tr/\n/ /r;
+	} elsif (substr ($text, 1) eq 'anek'  ||  substr ($text, 1) eq 'анек' || substr ($text, 1) eq 'анекдот' ) {
+		$reply = Anek ();
 	} elsif (substr ($text, 1) eq 'version'  ||  substr ($text, 1) eq 'ver') {
 		$reply = 'Версия нуль.чего-то_там.чего-то_там';
 	} elsif (substr ($text, 1) eq 'help'  ||  substr ($text, 1) eq 'помощь') {
 		$reply = <<"EOL";
 
 ${csign}help | ${csign}помощь             - это сообщение
+${csign}anek | ${csign}анек | ${csign}анекдот    - рандомный анекдот с anekdot.ru
 ${csign}buni                       - комикс-стрип hapi buni
 ${csign}bunny                      - кролик
 ${csign}rabbit | ${csign}кролик           - кролик
