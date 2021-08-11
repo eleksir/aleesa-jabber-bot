@@ -8,6 +8,7 @@ data/friday/**
 data/image/**
 data/karma/**
 data/lat/**
+data/proverb/**
 TODO
 *.pid
 *.log

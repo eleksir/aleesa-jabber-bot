@@ -41,6 +41,10 @@
         "dir" : "data/friday",
         "src" : "data/friday.txt"
     },
+    "proverb" : {
+        "dir" : "data/proverb",
+        "srcdir" : "data/proverb_src"
+    },
     "fortune" : {
         "dir" : "data/fortune",
         "srcdir" : "data/fortune_src"
