@@ -182,6 +182,26 @@ sub Command {
 		$reply = Weather ($city) =~ tr/\n/ /r;
 	} elsif (substr ($text, 1) eq 'anek'  ||  substr ($text, 1) eq 'анек' || substr ($text, 1) eq 'анекдот' ) {
 		$reply = Anek ();
+	} elsif (substr ($text, 1) eq 'coin' || substr ($text, 1) eq 'монетка') {
+		if (rand (101) < 0.016) {
+			$reply = "ребро";
+		} else {
+			if (irand (2) == 0) {
+				if (irand (2) == 0) {
+					$reply = 'орёл';
+				} else {
+					$reply = 'аверс';
+				}
+			} else {
+				if (irand (2) == 0) {
+					$reply = 'решка';
+				} else {
+					$reply = 'реверс';
+				}
+			}
+		}
+	} elsif (substr ($text, 1) eq 'roll' || substr ($text, 1) eq 'dice' || substr ($text, 1) eq 'кости') {
+		$reply = sprintf "На первой кости выпало %d, а на второй — %d.", irand (6) + 1, irand (6) + 1;
 	} elsif (substr ($text, 1) eq 'version'  ||  substr ($text, 1) eq 'ver') {
 		$reply = 'Версия нуль.чего-то_там.чего-то_там';
 	} elsif (substr ($text, 1) eq 'help'  ||  substr ($text, 1) eq 'помощь') {
@@ -193,6 +213,7 @@ ${csign}buni                       - комикс-стрип hapi buni
 ${csign}bunny                      - кролик
 ${csign}rabbit | ${csign}кролик           - кролик
 ${csign}cat | ${csign}кис                 - кошечка
+${csign}coin | ${csign}монетка            - подбросить монетку - орёл или решка?
 ${csign}dig | ${csign}копать              - заняться археологией
 ${csign}drink | ${csign}праздник          - какой сегодня праздник?
 ${csign}fish | ${csign}fisher             - порыбачить
@@ -210,6 +231,7 @@ ${csign}lat | ${csign}лат                 - сгенерировать фра
 ${csign}monkeyuser                 - комикс-стрип MonkeyUser
 ${csign}owl | ${csign}сова                - сова
 ${csign}ping | ${csign}пинг               - попинговать бота
+${csign}roll | ${csign}dice | ${csign}кости      - бросить кости
 ${csign}snail | ${csign}улитк а           - улитка
 ${csign}some_brew                  - выдать соответствующий напиток, бармен может налить rum, ром, vodka, водку, beer, пиво, tequila, текила, whisky, виски, absinthe, абсент
 ${csign}ver | ${csign}version             - написать что-то про версию ПО
