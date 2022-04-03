@@ -6,7 +6,7 @@ use warnings;
 use utf8;
 use open qw (:std :utf8);
 use English qw ( -no_match_vars );
-use JSON::XS;
+use JSON::XS qw (decode_json);
 use HTTP::Tiny;
 use Log::Any qw ($log);
 

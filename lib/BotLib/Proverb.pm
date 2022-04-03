@@ -7,7 +7,7 @@ use warnings;
 use utf8;
 use open qw (:std :utf8);
 use English qw ( -no_match_vars );
-use Carp qw (cluck croak);
+use Carp qw (croak);
 use File::Path qw (make_path);
 use Log::Any qw ($log);
 use Math::Random::Secure qw (irand);
@@ -30,7 +30,7 @@ sub Seed () {
 
 	my $backingfile = sprintf '%s/proverb.sqlite', $dir;
 
-	if (-f $backingfile) {
+	if (-e $backingfile) {
 		unlink $backingfile   ||  croak "Unable to remove $backingfile: $OS_ERROR";
 	}
 
@@ -40,7 +40,7 @@ sub Seed () {
 	while (my $proverbfile = readdir ($srcdirhandle)) {
 		my $srcfile = sprintf '%s/%s', $srcdir, $proverbfile;
 
-		unless (-f $srcfile) {
+		unless (-e $srcfile) {
 			next;
 		}
 

@@ -1,4 +1,17 @@
 #!/usr/bin/env perlcritic
+#
+# Задействованные модули критика:
+#
+# Perl::Critic::More
+# Perl::Critic::Pulp
+# Perl::Critic::TooMuchCode
+# Perl::Critic::Lax
+# Perl::Critic::CognitiveComplexity
+# Perl::Critic::Policy::CompileTime
+# Perl::Critic::Policy::ProhibitImplicitImport
+# Perl::Critic::Policy::Dynamic::NoIndirect
+# Perl::Critic::StricterSubs
+
 severity    = 5
 verbose     = 8
 
@@ -98,3 +111,39 @@ lib_sections    = NAME | VERSION | DESCRIPTION | AUTHOR | LICENSE AND COPYRIGHT
 
 [-ControlStructures::ProhibitDeepNests]
 # jabber bot lib have very nested structures that a bit fiddle to navigate :(
+
+[-Miscellanea::ProhibitUnrestrictedNoCritic]
+# to avoid critic cpanfile
+
+[-Editor::RequireEmacsFileVariables]
+# i don't use emacs
+
+[-TooMuchCode::ProhibitUnnecessaryUTF8Pragma]
+# oh, c'mon, man!
+
+[-ValuesAndExpressions::RequireConstantOnLeftSideOfEquality]
+# i prefer readability... but point is strong
+
+[-Lax::RequireConstantOnLeftSideOfEquality::ExceptEq]
+# same as previous
+
+[-ErrorHandling::RequireUseOfExceptions]
+# nope
+
+[-TooMuchCode::ProhibitDuplicateLiteral]
+# :( but i like magic numbers all over the code!
+
+[-Subroutines::ProhibitCallsToUnexportedSubs]
+# i have to do that!
+
+[-CodeLayout::RequireASCII]
+# kek!
+
+[-Lax::ProhibitEmptyQuotes::ExceptAsFallback]
+# i prefer '' for readability rather than $empty
+
+[-ValuesAndExpressions::RestrictLongStrings]
+# don't care about long strings until they are REALLY long
+
+[-TooMuchCode::ProhibitLargeBlock]
+# no, just no

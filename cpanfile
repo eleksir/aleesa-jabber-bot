@@ -1,3 +1,4 @@
+## no critic
 requires 'CHI';
 requires 'CHI::Driver::BerkeleyDB';
 requires 'Cwd::utf8';
@@ -8,6 +9,7 @@ requires 'Digest::MD5';
 requires 'Digest::SHA';
 requires 'File::Basename';
 requires 'File::Path';
+requires 'File::Spec';
 requires 'HTTP::Tiny';
 requires 'Hailo';
 requires 'JSON';

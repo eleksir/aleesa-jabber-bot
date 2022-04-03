@@ -33,7 +33,7 @@ sub Seed () {
 	for (0..$#dow) {
 		my $backingfile = sprintf '%s/%s.sqlite', $dir, $dow[$_];
 
-		if (-f $backingfile) {
+		if (-e $backingfile) {
 			unlink $backingfile   ||  croak "Unable to remove $backingfile: $OS_ERROR\n";
 		}
 

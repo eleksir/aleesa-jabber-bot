@@ -6,7 +6,7 @@ use warnings;
 use utf8;
 use open qw (:std :utf8);
 use English qw ( -no_match_vars );
-use Encode;
+use Encode qw (decode);
 use CHI;
 use CHI::Driver::BerkeleyDB;
 use DateTime;
@@ -76,7 +76,7 @@ sub Drink {
 	my $cache = CHI->new (
 		driver => 'BerkeleyDB',
 		root_dir => $c->{cachedir},
-		namespace => __PACKAGE__
+		namespace => __PACKAGE__,
 	);
 
 	# Those POSIX assholes just forgot to add unix timestamps without TZ offset, so...
@@ -96,7 +96,7 @@ sub Drink {
 		day => $mday,
 		hour => 0,
 		minute => 0,
-		second => 0
+		second => 0,
 	)->add (days => 1)->strftime ('%s');
 
 	if ((substr $offset, 0, 1) eq '+') {
@@ -109,7 +109,7 @@ sub Drink {
 	my $res = $cache->compute (
 		'Holiday',
 		{ expires_at => $expirationDate },
-		$drinkCallBack
+		$drinkCallBack,
 	);
 
 	if (defined $res && $res ne '') {

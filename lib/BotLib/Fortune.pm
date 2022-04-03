@@ -11,7 +11,6 @@ use Carp qw (croak);
 use File::Path qw (make_path);
 use Log::Any qw ($log);
 use Math::Random::Secure qw (irand);
-use MIME::Base64;
 use SQLite_File;
 use BotLib::Conf qw (LoadConf);
 
@@ -30,7 +29,7 @@ sub Seed () {
 
 	my $backingfile = sprintf '%s/fortune.sqlite', $dir;
 
-	if (-f $backingfile) {
+	if (-e $backingfile) {
 		unlink $backingfile   ||  croak "Unable to remove $backingfile: $OS_ERROR\n";
 	}
 
@@ -40,7 +39,7 @@ sub Seed () {
 	while (my $fortunefile = readdir $srcdirhandle) {
 		my $srcfile = sprintf '%s/%s', $srcdir, $fortunefile;
 
-		unless (-f $srcfile) {
+		unless (-e $srcfile) {
 			next;
 		}
 
@@ -53,7 +52,7 @@ sub Seed () {
 		local $INPUT_RECORD_SEPARATOR = "\n%\n";
 
 		while (readline $fh) {
-			my $phrase = substr $_, 0, -3;
+			my $phrase = substr $_, 0, length ("\n%\n");
 			push @fortune, $phrase;
 		}
 

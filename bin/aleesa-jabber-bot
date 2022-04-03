@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-use 5.018;
+use 5.018; ## no critic (ProhibitImplicitImport)
 use strict;
 use warnings;
 use utf8;
@@ -26,12 +26,13 @@ BEGIN {
 use lib ("$workdir/lib", "$workdir/vendor_perl", "$workdir/vendor_perl/lib/perl5");
 no Cwd;
 use Cwd::utf8 qw (chdir abs_path);
-use POSIX qw (setgid setuid setsid);
+use POSIX qw (setgid setuid);
 use File::Path qw (make_path);
 use File::Basename qw (basename dirname);
+use File::Spec ();
 use Log::Any qw ($log);
-use Log::Any::Adapter;
-use Log::Any::For::Std;
+use Log::Any::Adapter ();
+use Log::Any::For::Std ();
 use BotLib::Conf qw (LoadConf);
 use JabberBot qw (RunJabberBot);
 
@@ -44,13 +45,13 @@ my $runAsUid = $UID;
 
 my $piddir = '/var/run/' . basename (abs_path $PROGRAM_NAME);
 my $C = LoadConf ();
-my $loglevel = $C->{'loglevel'} // 'notice';
+my $loglevel = $C->{loglevel} // 'notice';
 my $logfile;
 
-if (defined $C->{'log'}) {
-	$logfile = $C->{'log'};
-} elsif (defined $C->{'debug_log'}) {
-	$logfile = $C->{'debug_log'};
+if (defined $C->{log}) {
+	$logfile = $C->{log};
+} elsif (defined $C->{debug_log}) {
+	$logfile = $C->{debug_log};
 }
 
 # if we run under root, create pid dir and set correct owner for it, same for debug log if it is defined
@@ -63,8 +64,8 @@ if ($UID == 0) {
 		make_path (
 			$piddir, {
 				uid   => $uid,
-				group => $gid
-			}
+				group => $gid,
+			},
 		) or die "Unable to create $piddir: $OS_ERROR\n";
 	}
 
@@ -75,8 +76,8 @@ if ($UID == 0) {
 			make_path (
 				$logdir, {
 					uid   => $uid,
-					group => $gid
-				}
+					group => $gid,
+				},
 			) or die "Unable to create $logdir: $OS_ERROR\n";
 		}
 	}
@@ -97,15 +98,15 @@ if (defined $logfile) {
 	# verbosity paticulary for CHI.
 	Log::Any::Adapter->set (
 		{
-			category => 'CHI::Driver'
+			category => 'CHI::Driver',
 		},
 		'File',
 		$logfile,
-		log_level => 'warn'
+		log_level => 'warn',
 	);
 } else {
 	# no log defined so set loglevel to the least verbose
-	Log::Any::Adapter->set ('File', '/dev/null', 'log_level'=>'emergency');
+	Log::Any::Adapter->set ('File', File::Spec->devnull, 'log_level'=>'emergency');
 }
 
 # double fork attach to /dev/null all stdio and go background
@@ -142,7 +143,7 @@ $PROGRAM_NAME = abs_path $PROGRAM_NAME;  ## no critic (Variables::RequireLocaliz
 
 RunJabberBot ();
 
-if (-f $pidfile) {
+if (-e $pidfile) {
 	unlink $pidfile;
 }
 
@@ -151,10 +152,10 @@ exit 0;
 sub daemonize () {
 	__fork ();
 	POSIX::setsid ();
-	open (STDIN, '<', '/dev/null');   ## no critic (InputOutput::RequireCheckedSyscalls, InputOutput::RequireCheckedOpen)
+	open (STDIN, '<', File::Spec->devnull);   ## no critic (InputOutput::RequireCheckedSyscalls, InputOutput::RequireCheckedOpen)
 	# we handle STDOUT && STDERR via Log::Any::For::Std, so do not close them explicitly
-	#open (STDOUT, '>', '/dev/null'); ## no critic (InputOutput::RequireCheckedSyscalls, InputOutput::RequireCheckedOpen)
-	#open (STDERR, '>', '/dev/null'); ## no critic (InputOutput::RequireCheckedSyscalls, InputOutput::RequireCheckedOpen)
+	#open (STDOUT, '>', File::Spec->devnull); ## no critic (InputOutput::RequireCheckedSyscalls, InputOutput::RequireCheckedOpen)
+	#open (STDERR, '>', File::Spec->devnull); ## no critic (InputOutput::RequireCheckedSyscalls, InputOutput::RequireCheckedOpen)
 	__fork ();
 	umask 0;
 	return;
@@ -178,7 +179,7 @@ sub __fork () {
 sub __signal_handler ($) {
 	$log->info ("[INFO] Caught a signal $OS_ERROR");
 
-	if (-f $pidfile) {
+	if (-e $pidfile) {
 		unlink $pidfile;
 	}
 

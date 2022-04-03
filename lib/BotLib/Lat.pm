@@ -35,7 +35,7 @@ sub Train () {
 	my $lat = Hailo->new (
 		brain => $brain,
 		# in our case mean amount of words in phase is 3
-		order => 2
+		order => 2,
 	);
 
 	$lat->train ($srcfile);
@@ -54,7 +54,7 @@ sub Lat () {
 		return '';
 	}
 
-	unless (-f $brain) {
+	unless (-e $brain) {
 		$log->error ("[ERROR] No lat module data: $brain is absent! Train lat first.");
 		return '';
 	}
@@ -63,7 +63,7 @@ sub Lat () {
 		brain => $brain,
 		# in our case mean amount of words in phase is 3
 		order => 2,
-		save_on_exit => 0
+		save_on_exit => 0,
 	);
 
 	return $lat->reply ();

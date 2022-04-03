@@ -6,7 +6,7 @@ use warnings;
 use utf8;
 use open qw (:std :utf8);
 use English qw ( -no_match_vars );
-use Encode;
+use Encode qw (decode);
 use HTML::TokeParser;
 use HTTP::Tiny;
 use JSON::XS;

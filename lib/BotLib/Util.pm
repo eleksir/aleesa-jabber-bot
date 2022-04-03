@@ -8,10 +8,10 @@ use open qw (:std :utf8);
 use English qw ( -no_match_vars );
 use Carp qw (cluck);
 use Digest::SHA qw (sha1_base64);
-use Encode;
-use MIME::Base64;
+use Encode qw (encode_utf8);
+use MIME::Base64 qw (encode_base64);
 use Text::Fuzzy qw (distance_edits);
-use URI::URL;
+use URI::URL qw (url);
 
 use version; our $VERSION = qw (1.0);
 use Exporter qw (import);
@@ -29,13 +29,8 @@ sub trim {
 		return $str;
 	}
 
-	while (substr ($str, 0, 1) =~ /^\s$/xms) {
-		$str = substr $str, 1;
-	}
-
-	while (substr ($str, -1, 1) =~ /^\s$/xms) {
-		chop $str;
-	}
+	$str =~ s/^\s+//u;
+	$str =~ s/\s+$//u;
 
 	return $str;
 }

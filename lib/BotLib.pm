@@ -6,7 +6,6 @@ use warnings;
 use utf8;
 use open qw (:std :utf8);
 use English qw ( -no_match_vars );
-use Carp qw (carp);
 use Math::Random::Secure qw (irand);
 use BotLib::Anek qw (Anek);
 use BotLib::Archeologist qw (Dig);
@@ -30,6 +29,10 @@ use BotLib::Xkcd qw (Xkcd);
 use version; our $VERSION = qw (1.0);
 use Exporter qw (import);
 our @EXPORT_OK = qw (Command RandomCommonPhrase RealJID);
+
+sub RandomCommonPhrase ();
+sub Command;
+sub RealJID(%);
 
 my $c = LoadConf ();
 
@@ -69,123 +72,113 @@ sub Command {
 	my $csign = $c->{jabberbot}->{aleesa}->{csign};
 
 	my $reply;
+	my $cmd = substr $text, length ($csign);
 
-	if (substr ($text, 1, 3) eq 'rum' || substr ($text, 1, 3) eq 'ром') {
-		my $target;
+	if (($cmd =~ /rum\s?/u)  ||  ($cmd =~ /ром\s?/u)) {
+		my $target = $chattername;
 
-		if (($hash{'type'} eq 'groupchat') && (length ($text) > 5)) {
-			$target = trim (substr $text, 5);
-		}
-
-		if (! defined $target || ($target eq '')) {
-			$target = $chattername;
+		if ($hash{'type'} eq 'groupchat') {
+			if ($cmd =~ /rum\s+(.*)/u) {
+				$target = $1 if ($1 ne '');
+			} elsif ($cmd =~ /ром\s+(.*)/u) {
+				$target = $1 if ($1 ne '');
+			}
 		}
 
 		$reply = '/me притаскивает на подносе стопку рома для ' . $target . ', края стопки искрятся кристаллами соли.';
-	} elsif (substr ($text, 1, 5) eq 'vodka' || substr ($text, 1, 5) eq 'водка') {
-		my $target;
+	} elsif (($cmd =~ /vodka\s?/u)  ||  ($cmd =~ /водка\s?/u)) {
+		my $target = $chattername;
 
-		if (($hash{'type'} eq 'groupchat') && (length ($text) > 7)) {
-			$target = trim (substr $text, 7);
-		}
-
-		if (! defined $target || ($target eq '')) {
-			$target = $chattername;
+		if ($hash{'type'} eq 'groupchat') {
+			if ($cmd =~ /vodka\s+(.*)/u) {
+				$target = $1 if ($1 ne '');
+			} elsif ($cmd =~ /водка\s+(.*)/u) {
+				$target = $1 if ($1 ne '');
+			}
 		}
 
 		$reply = '/me подаёт шот водки с небольшим маринованным огурчиком на блюдце для ' . $target . '. Из огурчика торчит небольшая вилочка.';
-	} elsif (substr ($text, 1, 4) eq 'beer' || substr ($text, 1, 4) eq 'пиво') {
-		my $target;
+	} elsif (($cmd =~ /^beer\s?/u)  ||  ($cmd =~ /^пиво\s?/u)) {
+		my $target = $chattername;
 
-		if (($hash{'type'} eq 'groupchat') && (length ($text) > 6)) {
-			$target = trim (substr $text, 6);
-		}
-
-		if (! defined $target || ($target eq '')) {
-			$target = $chattername;
+		if ($hash{'type'} eq 'groupchat') {
+			if ($cmd =~ /^beer\s+(.*)/u) {
+				$target = $1 if ($1 ne '');
+			} elsif ($cmd =~ /^пиво\s+(.*)/u) {
+				$target = $1 if ($1 ne '');
+			}
 		}
 
 		$reply = '/me бахает об стол перед ' . $target . ' кружкой холодного пива, часть пенной шапки сползает по запотевшей стенке кружки.';
-	} elsif (substr ($text, 1, 7) eq 'tequila') {
-		my $target;
+	} elsif ($cmd =~ /^tequila\s?/u) {
+		my $target = $chattername;
 
-		if (($hash{'type'} eq 'groupchat') && (length ($text) > 9)) {
-			$target = trim (substr $text, 9);
-		}
-
-		if (! defined $target || ($target eq '')) {
-			$target = $chattername;
-		}
-
-		$reply = '/me ставит рядом с ' . $target . ' шот текилы, аккуратно на ребро стопки насаживает дольку лайма и ставит кофейное блюдце с горочкой соли.';
-	} elsif (substr ($text, 1, 6) eq 'текила') {
-		my $target;
-
-		if (($hash{'type'} eq 'groupchat') && (length ($text) > 8)) {
-			$target = trim (substr $text, 8);
-		}
-
-		if (! defined $target || ($target eq '')) {
-			$target = $chattername;
+		if ($hash{'type'} eq 'groupchat') {
+			if ($cmd =~ /^tequila\s+(.*)/u) {
+				$target = $1 if ($1 ne '');
+			}
 		}
 
 		$reply = '/me ставит рядом с ' . $target . ' шот текилы, аккуратно на ребро стопки насаживает дольку лайма и ставит кофейное блюдце с горочкой соли.';
-	} elsif (substr ($text, 1, 6) eq 'whisky') {
-		my $target;
+	} elsif ($cmd =~ /^текила\s?/u) {
+		my $target = $chattername;
 
-		if (($hash{'type'} eq 'groupchat') && (length ($text) > 8)) {
-			$target = trim (substr $text, 8);
+		if ($hash{'type'} eq 'groupchat') {
+			if ($cmd =~ /^текила\s+(.*)/u) {
+				$target = $1 if ($1 ne '');
+			}
 		}
 
-		if (! defined $target || ($target eq '')) {
-			$target = $chattername;
-		}
+		$reply = '/me ставит рядом с ' . $target . ' шот текилы, аккуратно на ребро стопки насаживает дольку лайма и ставит кофейное блюдце с горочкой соли.';
+	} elsif ($cmd =~ /^whisky\s?/u) {
+		my $target = $chattername;
 
-		$reply = '/me демонстративно достаёт из морозилки пару кубических камушков, бросает их в толстодонный стакан и аккуратно наливает Jack Daniels. Запускает стакан вдоль барной стойки, он останавливается около ' . $target . '.';
-	} elsif (substr ($text, 1, 5) eq 'виски') {
-		my $target;
-
-		if (($hash{'type'} eq 'groupchat') && (length ($text) > 7)) {
-			$target = trim (substr $text, 7);
-		}
-
-		if (! defined $target || ($target eq '')) {
-			$target = $chattername;
+		if ($hash{'type'} eq 'groupchat') {
+			if ($cmd =~ /^whisky\s+(.*)/u) {
+				$target = $1 if ($1 ne '');
+			}
 		}
 
 		$reply = '/me демонстративно достаёт из морозилки пару кубических камушков, бросает их в толстодонный стакан и аккуратно наливает Jack Daniels. Запускает стакан вдоль барной стойки, он останавливается около ' . $target . '.';
-	} elsif (substr ($text, 1, 8) eq 'absinthe') {
-		my $target;
+	} elsif ($cmd =~ /^виски\s?/u) {
+		my $target = $chattername;
 
-		if (($hash{'type'} eq 'groupchat') && (length ($text) > 10)) {
-			$target = trim (substr $text, 10);
+		if ($hash{'type'} eq 'groupchat') {
+			if ($cmd =~ /^виски\s+(.*)/u) {
+				$target = $1 if ($1 ne '');
+			}
 		}
 
-		if (! defined $target || ($target eq '')) {
-			$target = $chattername;
-		}
+		$reply = '/me демонстративно достаёт из морозилки пару кубических камушков, бросает их в толстодонный стакан и аккуратно наливает Jack Daniels. Запускает стакан вдоль барной стойки, он останавливается около ' . $target . '.';
+	} elsif ($cmd =~ /^absinthe\s?/u) {
+		my $target = $chattername;
 
-		$reply = '/me наливает абсент в стопку. Смочив кубик сахара в абсенте кладёт его на дырявую ложечку и пожигает. Как только пламя потухнет, ' . $bot->{'alias'} . ' размешивает оплавившийся кубик в абсенте и подносит стопку ' . $target . '.';
-	} elsif (substr ($text, 1, 6) eq 'абсент') {
-		my $target;
-
-		if (($hash{'type'} eq 'groupchat') && (length ($text) > 8)) {
-			$target = trim (substr $text, 8);
-		}
-
-		if (! defined $target || ($target eq '')) {
-			$target = $chattername;
+		if ($hash{'type'} eq 'groupchat') {
+			if ($cmd =~ /^absinthe\s+(.*)/u) {
+				$target = $1 if ($1 ne '');
+			}
 		}
 
 		$reply = '/me наливает абсент в стопку. Смочив кубик сахара в абсенте кладёт его на дырявую ложечку и пожигает. Как только пламя потухнет, ' . $bot->{'alias'} . ' размешивает оплавившийся кубик в абсенте и подносит стопку ' . $target . '.';
-	} elsif (substr ($text, 1, 2) eq 'w '  ||  substr ($text, 1, 2) eq 'п ') {
-		my $city = substr $text, 2;
+	} elsif ($cmd =~ /^абсент\s?/u) {
+		my $target = $chattername;
+
+		if ($hash{'type'} eq 'groupchat') {
+			if ($cmd =~ /^абсент\s+(.*)/u) {
+				$target = $1 if ($1 ne '');
+			}
+		}
+
+		$reply = '/me наливает абсент в стопку. Смочив кубик сахара в абсенте кладёт его на дырявую ложечку и пожигает. Как только пламя потухнет, ' . $bot->{'alias'} . ' размешивает оплавившийся кубик в абсенте и подносит стопку ' . $target . '.';
+	} elsif ($cmd =~ /^[wп]\s+.+/u) {
+		$cmd =~ /^[wп]\s+(.*)/;
+		my $city = $1; ## no critic (RegularExpressions::ProhibitCaptureWithoutTest)
 		$reply = Weather ($city) =~ tr/\n/ /r;
-	} elsif (substr ($text, 1) eq 'anek'  ||  substr ($text, 1) eq 'анек' || substr ($text, 1) eq 'анекдот' ) {
+	} elsif ($cmd eq 'anek'  ||  $cmd eq 'анек' || $cmd eq 'анекдот' ) {
 		$reply = Anek ();
-	} elsif (substr ($text, 1) eq 'coin' || substr ($text, 1) eq 'монетка') {
+	} elsif ($cmd eq 'coin' || $cmd eq 'монетка') {
 		if (rand (101) < 0.016) {
-			$reply = "ребро";
+			$reply = 'ребро';
 		} else {
 			if (irand (2) == 0) {
 				if (irand (2) == 0) {
@@ -201,11 +194,11 @@ sub Command {
 				}
 			}
 		}
-	} elsif (substr ($text, 1) eq 'roll' || substr ($text, 1) eq 'dice' || substr ($text, 1) eq 'кости') {
-		$reply = sprintf "На первой кости выпало %d, а на второй — %d.", irand (6) + 1, irand (6) + 1;
-	} elsif (substr ($text, 1) eq 'version'  ||  substr ($text, 1) eq 'ver') {
-		$reply = 'Версия нуль.чего-то_там.чего-то_там';
-	} elsif (substr ($text, 1) eq 'help'  ||  substr ($text, 1) eq 'помощь') {
+	} elsif ($cmd eq 'roll'  ||  $cmd eq 'dice'  ||  $cmd eq 'кости') {
+		$reply = sprintf 'На первой кости выпало %d, а на второй — %d.', irand (6) + 1, irand (6) + 1;
+	} elsif ($cmd eq 'version'  ||  $cmd eq 'ver'  ||  $cmd eq 'версия') {
+		$reply = 'Версия три.чего-то_там.чего-то_там';
+	} elsif ($cmd eq 'help'  ||  $cmd eq 'помощь') {
 		$reply = <<"EOL";
 
 ${csign}help | ${csign}помощь             - это сообщение
@@ -242,77 +235,77 @@ ${csign}w город | ${csign}п город         - погода в горо�
 ${csign}xkcd                       - комикс-стрип с xkcb.ru
 EOL
 
-	} elsif (substr ($text, 1) eq 'lat'  ||  substr ($text, 1) eq 'лат') {
+	} elsif ($cmd eq 'lat'  ||  $cmd eq 'лат') {
 		$reply = Lat ();
-	} elsif (substr ($text, 1) eq 'cat'  ||  substr ($text, 1) eq 'кис') {
+	} elsif ($cmd eq 'cat'  ||  $cmd eq 'кис') {
 		$reply = Kitty ();
-	} elsif (substr ($text, 1) eq 'fox'  ||  substr ($text, 1) eq 'лис') {
+	} elsif ($cmd eq 'fox'  ||  $cmd eq 'лис') {
 		$reply = Fox ();
-	} elsif (substr ($text, 1) eq 'frog'  ||  substr ($text, 1) eq 'лягушка') {
+	} elsif ($cmd eq 'frog'  ||  $cmd eq 'лягушка') {
 		$reply = Frog ();
-	} elsif (substr ($text, 1) eq 'horse'  ||  substr ($text, 1) eq 'лошадь'  || substr ($text, 1) eq 'лошадка') {
+	} elsif ($cmd eq 'horse'  ||  $cmd eq 'лошадь'  || $cmd eq 'лошадка') {
 		$reply = Horse ();
-	} elsif (substr ($text, 1) eq 'snail'  ||  substr ($text, 1) eq 'улитка') {
+	} elsif ($cmd eq 'snail'  ||  $cmd eq 'улитка') {
 		$reply = Snail ();
-	} elsif (substr ($text, 1) eq 'dig'  ||  substr ($text, 1) eq 'копать') {
+	} elsif ($cmd eq 'dig'  ||  $cmd eq 'копать') {
 		$reply = Dig ($chattername);
-	} elsif (substr ($text, 1) eq 'fish'  ||  substr ($text, 1) eq 'fisher'  ||  substr ($text, 1) eq 'рыба'  ||  substr ($text, 1) eq 'рыбка'  ||  substr ($text, 1) eq 'рыбалка') {
+	} elsif ($cmd eq 'fish'  ||  $cmd eq 'fisher'  ||  $cmd eq 'рыба'  ||  $cmd eq 'рыбка'  ||  $cmd eq 'рыбалка') {
 		$reply = Fish ($chattername);
-	} elsif (substr ($text, 1) eq 'buni') {
+	} elsif ($cmd eq 'buni') {
 		$reply = Buni ();
-	} elsif (substr ($text, 1) eq 'xkcd') {
+	} elsif ($cmd eq 'xkcd') {
 		$reply = Xkcd ();
-	} elsif (substr ($text, 1) eq 'monkeyuser') {
+	} elsif ($cmd eq 'monkeyuser') {
 		$reply = Monkeyuser ();
-	} elsif (substr ($text, 1) eq 'drink' || substr ($text, 1) eq 'праздник') {
+	} elsif ($cmd eq 'drink' || $cmd eq 'праздник') {
 		$reply = Drink ();
-	} elsif (substr ($text, 1) eq 'bunny' || substr ($text, 1) eq 'rabbit' || substr ($text, 1) eq 'кролик') {
+	} elsif ($cmd eq 'bunny' || $cmd eq 'rabbit' || $cmd eq 'кролик') {
 		$reply = Rabbit ();
-	} elsif (substr ($text, 1) eq 'owl' || substr ($text, 1) eq 'сова') {
+	} elsif ($cmd eq 'owl' || $cmd eq 'сова') {
 		$reply = Owl ();
-	} elsif ((length ($text) >= 6 && (substr ($text, 1, 6) eq 'karma ' || substr ($text, 1, 6) eq 'карма '))  ||  substr ($text, 1) eq 'karma'  ||  substr ($text, 1) eq 'карма') {
+	} elsif ($cmd =~ /^karma\s*/  ||  $cmd =~ /^карма\s*/) {
 		my $mytext = '';
 
-		if (length ($text) > 6) {
-			$mytext = substr $text, 7;
-			chomp $mytext;
+		if (length ($cmd) > length ('karma')) {
+			$mytext = substr $cmd, length ('karma');
+			while ($mytext =~ /\n$/) { chomp $mytext }
+			$mytext = trim $mytext;
+		} elsif (length ($cmd) > length ('карма')) {
+			$mytext = substr $cmd, length ('карма');
+			while ($mytext =~ /\n$/) { chomp $mytext }
 			$mytext = trim $mytext;
 		} else {
 			$mytext = '';
 		}
 
 		$reply = KarmaGet ($chatid, $mytext);
-	} elsif (substr ($text, 1) eq 'friday'  ||  substr ($text, 1) eq 'пятница') {
+	} elsif ($cmd eq 'friday'  ||  $cmd eq 'пятница') {
 		$reply = Friday ();
-	} elsif (substr ($text, 1) eq 'proverb'  ||  substr ($text, 1) eq 'пословица') {
+	} elsif ($cmd eq 'proverb'  ||  $cmd eq 'пословица') {
 		$reply = Proverb ();
-	} elsif (substr ($text, 1) eq 'fortune'  ||  substr ($text, 1) eq 'фортунка'  ||  substr ($text, 1) eq 'f'  ||  substr ($text, 1) eq 'ф') {
+	} elsif ($cmd eq 'fortune'  ||  $cmd eq 'фортунка'  ||  $cmd eq 'f'  ||  $cmd eq 'ф') {
 		my $phrase = Fortune ();
 		# workaround Net::Jabber::Bot outgoing message ![:print:] replacement
 		$phrase =~ s/\s\s+\-\-/\n \-\-/xmsg;
 		$reply = $phrase;
-	} elsif (substr ($text, 1) eq 'ping') {
+	} elsif ($cmd eq 'ping') {
 		$reply = 'Pong.';
-	} elsif (substr ($text, 1) eq 'пинг') {
+	} elsif ($cmd eq 'пинг') {
 		$reply = 'Понг.';
-	} elsif (substr ($text, 1) eq 'kde' || substr ($text, 1) eq 'кде') {
+	} elsif ($cmd eq 'kde' || $cmd eq 'кде') {
 		my @phrases = (
 			'Нет, я не буду поднимать вам плазму.',
-			'Повторяйте эту мантру по утрам не менее 5 раз: "Плазма не падает." И, возможно, она перестанет у вас падать.'
+			'Повторяйте эту мантру по утрам не менее 5 раз: "Плазма не падает." И, возможно, она перестанет у вас падать.',
 		);
 
 		$reply = $phrases[irand ($#phrases + 1)];
-	} elsif (substr ($text, 1) eq '=(' || substr ($text, 1) eq ':(' || substr ($text, 1) eq '):') {
-		$reply = ':)';
-	} elsif (substr ($text, 1) eq '=)' || substr ($text, 1) eq ':)' || substr ($text, 1) eq '(:') {
-		$reply = ':D';
 	}
 
 	return $reply;
 }
 
 # in this particular case real jid is really hidden :) and i hope that i found where it is hiding.
-sub RealJID {
+sub RealJID (%) {
 	my %hash = @_;
 	my $bot = $hash{'bot_object'};
 	my $myjid = $hash{'from_full'}; # in case of real jid myjid is name@server/resource in case of "groupchat" jid it is group@conf_server/name

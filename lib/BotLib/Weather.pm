@@ -6,11 +6,10 @@ use warnings;
 use utf8;
 use open qw (:std :utf8);
 use English qw ( -no_match_vars );
-use Carp qw (carp cluck);
 use CHI;
 use CHI::Driver::BerkeleyDB;
 use HTTP::Tiny;
-use JSON::XS;
+use JSON::XS qw (decode_json);
 use Log::Any qw ($log);
 use BotLib::Conf qw (LoadConf);
 use BotLib::Util qw (trim urlencode);
@@ -63,7 +62,7 @@ sub Weather {
 			unless (defined $fc) {
 				$log->warn ("[WARN] openweathermap returns corrupted json: $EVAL_ERROR");
 				return undef;
-			};
+			}
 		} else {
 			$log->warn (sprintf 'Server return status %s with message: %s', $r->{status}, $r->{reason});
 			return undef;
@@ -127,13 +126,13 @@ sub Weather {
 	my $cache = CHI->new (
 		driver => 'BerkeleyDB',
 		root_dir => $c->{cachedir},
-		namespace => __PACKAGE__
+		namespace => __PACKAGE__,
 	);
 
 	my $w = $cache->compute (
 		$city,
 		'3 hours',
-		$weatherCallBack
+		$weatherCallBack,
 	);
 
 	my $reply;
@@ -149,7 +148,7 @@ sub Weather {
 				$w->{temperature_min},
 				$w->{temperature_feelslike},
 				$w->{humidity},
-				$w->{pressure}
+				$w->{pressure},
 			);
 		} else {
 			$reply = sprintf ("Погода в городе %s, %s:\n%s, ветер %s %s м/c, температура %s-%s°C, ощущается как %s°C, относительная влажность %s%%, давление %s мм.рт.ст",
@@ -162,7 +161,7 @@ sub Weather {
 				$w->{temperature_max},
 				$w->{temperature_feelslike},
 				$w->{humidity},
-				$w->{pressure}
+				$w->{pressure},
 			);
 		}
 	} else {

@@ -19,7 +19,9 @@ sub LoadConf {
 	open my $CH, '<', $c or die "[FATA] No conf at $c: $OS_ERROR\n";
 	my $len = (stat $c) [7];
 	my $json;
+	use bytes;
 	my $readlen = read $CH, $json, $len;
+	no bytes;
 
 	unless ($readlen) {
 		close $CH;                                   ## no critic (InputOutput::RequireCheckedSyscalls
