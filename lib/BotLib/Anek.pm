@@ -1,15 +1,15 @@
 package BotLib::Anek;
 
-use 5.018;
+use 5.018;  ## no critic (ProhibitImplicitImport)
 use strict;
 use warnings;
 use utf8;
 use open qw (:std :utf8);
 use English qw ( -no_match_vars );
 use Encode qw (decode);
-use HTML::TokeParser;
-use HTTP::Tiny;
-use JSON::XS;
+use HTML::TokeParser ();
+use HTTP::Tiny ();
+use JSON::XS ();
 use Log::Any qw ($log);
 
 use version; our $VERSION = qw (1.0);

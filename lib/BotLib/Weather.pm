@@ -1,14 +1,14 @@
 package BotLib::Weather;
 
-use 5.018;
+use 5.018; ## no critic (ProhibitImplicitImport)
 use strict;
 use warnings;
 use utf8;
 use open qw (:std :utf8);
 use English qw ( -no_match_vars );
-use CHI;
-use CHI::Driver::BerkeleyDB;
-use HTTP::Tiny;
+use CHI ();
+use CHI::Driver::BerkeleyDB ();
+use HTTP::Tiny ();
 use JSON::XS qw (decode_json);
 use Log::Any qw ($log);
 use BotLib::Conf qw (LoadConf);

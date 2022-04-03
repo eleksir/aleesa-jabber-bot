@@ -1,6 +1,6 @@
 package BotLib::Image::Flickr;
 
-use 5.018;
+use 5.018; ## no critic (ProhibitImplicitImport)
 use strict;
 use warnings;
 use utf8;
@@ -8,12 +8,12 @@ use open qw (:std :utf8);
 use English qw ( -no_match_vars );
 use Digest::HMAC_SHA1 ();
 use File::Path qw (make_path);
-use JSON::XS;
-use HTTP::Tiny;
+use JSON::XS ();
+use HTTP::Tiny ();
 use Log::Any qw ($log);
 use Math::Random::Secure qw (irand);
 use MIME::Base64 qw (encode_base64);
-use SQLite_File;
+use SQLite_File ();
 use URI::Encode::XS qw (uri_encode);
 
 use BotLib::Conf qw (LoadConf);

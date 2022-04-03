@@ -1,7 +1,7 @@
 package BotLib::Lat;
 # famous latin phases taken from https://ru.wikipedia.org/wiki/Список_крылатых_латинских_выражений
 
-use 5.018;
+use 5.018; ## no critic (ProhibitImplicitImport)
 use strict;
 use warnings;
 use utf8;
@@ -10,7 +10,7 @@ use English qw ( -no_match_vars );
 use Carp qw (carp);
 use File::Basename qw (dirname);
 use File::Path qw (make_path);
-use Hailo;
+use Hailo ();
 use Log::Any qw ($log);
 use BotLib::Conf qw (LoadConf);
 

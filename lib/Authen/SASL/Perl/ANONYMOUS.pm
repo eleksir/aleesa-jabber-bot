@@ -1,33 +1,38 @@
+## no critic (ClassHierarchies::ProhibitExplicitISA, Documentation::RequirePODUseEncodingUTF8, Documentation::RequirePodSections)
 # Copyright (c) 2002 Graham Barr <gbarr@pobox.com>. All rights reserved.
 # This program is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
 
 package Authen::SASL::Perl::ANONYMOUS;
 
+use 5.018; ## no critic (ProhibitImplicitImport)
 use strict;
+use warnings;
+use utf8;
+
 use vars qw($VERSION @ISA);
 
-$VERSION = "2.14";
+$VERSION = '2.14';
 @ISA	 = qw(Authen::SASL::Perl);
 
 my %secflags = (
 	noplaintext => 1,
 );
 
-sub _order { 0 }
+sub _order { return 0 }
 sub _secflags {
   shift;
-  grep { $secflags{$_} } @_;
+  return grep { $secflags{$_} } @_;
 }
 
-sub mechanism { 'ANONYMOUS' }
+sub mechanism { return 'ANONYMOUS' }
 
 sub client_start {
-  shift->_call('authname')
+  return shift->_call('authname');
 }
 
 sub client_step {
-  shift->_call('authname')
+  return shift->_call('authname');
 }
 
 1;

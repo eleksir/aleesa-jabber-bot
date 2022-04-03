@@ -4,14 +4,19 @@
 
 package Authen::SASL::EXTERNAL;
 
+use 5.018; ## no critic (ProhibitImplicitImport)
 use strict;
+use warnings;
+use utf8;
+
 use vars qw($VERSION);
 
-$VERSION = "2.14";
+$VERSION = '2.14';
 
+use Authen::SASL ();
 sub new {
   shift;
-  Authen::SASL->new(@_, mechanism => 'EXTERNAL');
+  return Authen::SASL->new(@_, mechanism => 'EXTERNAL');
 }
 
 1;

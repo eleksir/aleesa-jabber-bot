@@ -1,13 +1,13 @@
 package BotLib::Fox;
 
-use 5.018;
+use 5.018;  ## no critic (ProhibitImplicitImport)
 use strict;
 use warnings;
 use utf8;
 use open qw (:std :utf8);
 use English qw ( -no_match_vars );
 use JSON::XS qw (decode_json);
-use HTTP::Tiny;
+use HTTP::Tiny ();
 use Log::Any qw ($log);
 
 use version; our $VERSION = qw (1.0);

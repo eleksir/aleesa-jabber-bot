@@ -1,12 +1,12 @@
 package BotLib::Karma;
 
-use 5.018;
+use 5.018; ## no critic (ProhibitImplicitImport)
 use strict;
 use warnings;
 use utf8;
 use open qw (:std :utf8);
 use English qw ( -no_match_vars );
-use DB_File;
+use DB_File ();
 use File::Path qw (make_path);
 use Log::Any qw ($log);
 use BotLib::Conf qw (LoadConf);

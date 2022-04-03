@@ -1,3 +1,4 @@
+## no critic (Documentation::RequirePodSections, Documentation::RequirePODUseEncodingUTF8)
 # Copyright (c) 2003-2009 Graham Barr, Djamel Boudjerda, Paul Connolly, Julian
 # Onions, Nexor and Yann Kerherve.
 # All rights reserved. This program is free software; you can redistribute
@@ -7,15 +8,20 @@
 
 package Authen::SASL::Perl::DIGEST_MD5;
 
+use 5.018; ## no critic (ProhibitImplicitImport)
 use strict;
+use warnings;
+use utf8;
+
 use vars qw($VERSION @ISA $CNONCE $NONCE);
 use Digest::MD5 qw(md5_hex md5);
 use Digest::HMAC_MD5 qw(hmac_md5);
+use Crypt::RC4 ();
 
 # TODO: complete qop support in server, should be configurable
 
-$VERSION = "2.14";
-@ISA = qw(Authen::SASL::Perl);
+$VERSION = '2.14';
+@ISA = qw(Authen::SASL::Perl); ## no critic (ClassHierarchies::ProhibitExplicitISA)
 
 my %secflags = (
   noplaintext => 1,
@@ -56,7 +62,7 @@ my @ourciphers = (
         sub { goto &Crypt::RC4::RC4; };
       *Crypt::RC4::keysize   =  sub {128};
       *Crypt::RC4::blocksize =  sub {1};
-    }
+    },
   },
   {
     name  => '3des',
@@ -99,7 +105,7 @@ my @ourciphers = (
         sub { goto &Crypt::RC4::RC4; };
       *Crypt::RC4::keysize   =  sub {56};
       *Crypt::RC4::blocksize =  sub {1};
-    }
+    },
   },
   {
     name  => 'rc4-40',
@@ -114,27 +120,27 @@ my @ourciphers = (
         sub { goto &Crypt::RC4::RC4; };
       *Crypt::RC4::keysize   =  sub {40};
       *Crypt::RC4::blocksize =  sub {1};
-    }
+    },
   },
 );
 
 ## The system we are on, might not be able to crypt the stream
 our $NO_CRYPT_AVAILABLE = 1;
 for (@ourciphers) {
-    eval "require $_->{pkg}";
-    unless ($@) {
+    eval "require $_->{pkg}"; ## no critic (BuiltinFunctions::ProhibitStringyEval)
+    unless ($@) { ## no critic (Variables::ProhibitPunctuationVars)
         $NO_CRYPT_AVAILABLE = 0;
         last;
     }
 }
 
-sub _order { 3 }
+sub _order { return 3 }
 sub _secflags {
   shift;
-  scalar grep { $secflags{$_} } @_;
+  return scalar grep { $secflags{$_} } @_;
 }
 
-sub mechanism { 'DIGEST-MD5' }
+sub mechanism { return 'DIGEST-MD5' }
 
 sub _init {
   my ($pkg, $self) = @_;
@@ -146,14 +152,14 @@ sub _init {
   $self->property('maxbuf',      0xFFFFFF);         # maximum supported by GSSAPI mech
   $self->property('externalssf', 0);
 
-  $self;
+  return $self;
 }
 
 sub _init_server {
   my $server  = shift;
   my $options = shift || {};
-  if (!ref $options or ref $options ne 'HASH') {
-    warn "options for DIGEST_MD5 should be a hashref";
+  if (!ref $options || ref $options ne 'HASH') {
+    warn 'options for DIGEST_MD5 should be a hashref'; ## no critic (ErrorHandling::RequireCarping)
     $options = {};
   }
 
@@ -167,7 +173,7 @@ sub _init_server {
                              or $options->{no_confidentiality}
                              or $NO_CRYPT_AVAILABLE;
 
-  $server->{supported_qop} = { map { $_ => 1 } @qop };
+  return $server->{supported_qop} = { map { $_ => 1 } @qop };
 }
 
 sub init_sec_layer {
@@ -181,6 +187,7 @@ sub init_sec_layer {
   # reset properties for new session
   $self->property(maxout => undef);
   $self->property(ssf    => undef);
+  return;
 }
 
 # no initial value passed to the server
@@ -191,7 +198,7 @@ sub client_start {
   $self->{error}     = undef;
   $self->{state}     = 0;
   $self->init_sec_layer;
-  '';
+  return '';
 }
 
 sub server_start {
@@ -201,7 +208,7 @@ sub server_start {
 
   $self->{need_step} = 1;
   $self->{error}     = undef;
-  $self->{nonce}     = md5_hex($NONCE || join (":", $$, time, rand));
+  $self->{nonce}     = md5_hex($NONCE || join (':', $$, time, rand)); ## no critic (Variables::ProhibitPunctuationVars)
 
   $self->init_sec_layer;
 
@@ -243,9 +250,9 @@ sub client_step {   # $self, $server_sasl_credentials
 
   if ($self->{state} == 1) {
     # check server's `rspauth' response
-    return $self->set_error("Server did not send rspauth in step 2")
+    return $self->set_error('Server did not send rspauth in step 2')
       unless ($sparams{rspauth});
-    return $self->set_error("Invalid rspauth in step 2")
+    return $self->set_error('Invalid rspauth in step 2')
       unless ($self->{rspauth} eq $sparams{rspauth});
 
     # all is well
@@ -255,15 +262,15 @@ sub client_step {   # $self, $server_sasl_credentials
 
   # check required fields in server challenge
   if (my @missing = grep { !exists $sparams{$_} } @server_required) {
-    return $self->set_error("Server did not provide required field(s): @missing")
+    return $self->set_error("Server did not provide required field(s): @missing");
   }
 
   my %response = (
     nonce        => $sparams{'nonce'},
-    cnonce       => md5_hex($CNONCE || join (":", $$, time, rand)),
+    cnonce       => md5_hex($CNONCE || join (':', $$, time, rand)), ## no critic (Variables::ProhibitPunctuationVars)
     'digest-uri' => $self->service . '/' . $self->host,
     # calc how often the server nonce has been seen; server expects "00000001"
-    nc           => sprintf("%08d",     ++$self->{nonce_counts}{$sparams{'nonce'}}),
+    nc           => sprintf('%08d',     ++$self->{nonce_counts}{$sparams{'nonce'}}),
     charset      => $sparams{'charset'},
   );
 
@@ -273,7 +280,7 @@ sub client_step {   # $self, $server_sasl_credentials
   # let caller-provided fields override defaults: authorization ID, service name, realm
 
   my $s_realm = $sparams{realm} || [];
-  my $realm = $self->_call('realm', @$s_realm);
+  my $realm = $self->_call('realm', @{$s_realm});
   unless (defined $realm) {
     # If the user does not pick a realm, use the first from the server
     $realm = $s_realm->[0];
@@ -293,12 +300,12 @@ sub client_step {   # $self, $server_sasl_credentials
   }
 
   my $user = $self->_call('user');
-  return $self->set_error("Username is required")
+  return $self->set_error('Username is required')
     unless defined $user;
   $response{username} = $user;
 
   my $password = $self->_call('pass');
-  return $self->set_error("Password is required")
+  return $self->set_error('Password is required')
     unless defined $password;
 
   $self->property('maxout', $sparams{maxbuf} || 65536);
@@ -313,7 +320,7 @@ sub client_step {   # $self, $server_sasl_credentials
   $self->{rspauth}    = $rspauth;
 
   # finally, return our response token
-  return _response(\%response, "is_client");
+  return _response(\%response, 'is_client');
 }
 
 sub _compute_digests_and_set_keys {
@@ -326,18 +333,18 @@ sub _compute_digests_and_set_keys {
   }
 
   my $realm = $params->{realm};
-  $realm = "" unless defined $realm;
+  $realm = '' unless defined $realm;
 
-  my $A1 = join (":",
-    md5(join (":", $params->{username}, $realm, $password)),
-    @$params{defined($params->{authzid})
+  my $A1 = join (':',
+    md5(join (':', $params->{username}, $realm, $password)),
+    @{$params{defined($params->{authzid})
       ? qw(nonce cnonce authzid)
       : qw(nonce cnonce)
-    }
+    }},
   );
 
   # pre-compute MD5(A1) and HEX(MD5(A1)); these are used multiple times below
-  my $hdA1 = unpack("H*", (my $dA1 = md5($A1)) );
+  my $hdA1 = unpack('H*', (my $dA1 = md5($A1)) );
 
   # derive keys for layer encryption / integrity
   $self->{kic} = md5($dA1,
@@ -365,21 +372,21 @@ sub _compute_digests_and_set_keys {
     $self->{ivs} = $cipher->{iv}->($self->{kcs});
   }
 
-  my $A2 = "AUTHENTICATE:" . $params->{'digest-uri'};
-  $A2 .= ":00000000000000000000000000000000" if ($params->{qop} ne 'auth');
+  my $A2 = 'AUTHENTICATE:' . $params->{'digest-uri'};
+  $A2 .= ':00000000000000000000000000000000' if ($params->{qop} ne 'auth');
 
   my $response = md5_hex(
-    join (":", $hdA1, @$params{qw(nonce nc cnonce qop)}, md5_hex($A2))
+    join (':', $hdA1, @{$params{qw(nonce nc cnonce qop)}}, md5_hex($A2)),
   );
 
   # calculate server `rspauth' response, so we can check in step 2
   # the only difference here is in the A2 string which from which
   # `AUTHENTICATE' is omitted in the calculation of `rspauth'
-  $A2 = ":" . $params->{'digest-uri'};
-  $A2 .= ":00000000000000000000000000000000" if ($params->{qop} ne 'auth');
+  $A2 = ':' . $params->{'digest-uri'};
+  $A2 .= ':00000000000000000000000000000000' if ($params->{qop} ne 'auth');
 
   my $rspauth = md5_hex(
-    join (":", $hdA1, @$params{qw(nonce nc cnonce qop)}, md5_hex($A2))
+    join (':', $hdA1, @{$params{qw(nonce nc cnonce qop)}}, md5_hex($A2)),
   );
 
   return ($response, $rspauth);
@@ -408,7 +415,7 @@ sub server_step {
     return $cb->();
   }
 
-  my $qop = $cparams{'qop'} || "auth";
+  my $qop = $cparams{'qop'} || 'auth';
   unless ($self->is_qop_supported($qop)) {
     $self->set_error("Client qop not supported (qop = '$qop')");
     return $cb->();
@@ -416,13 +423,13 @@ sub server_step {
 
   my $username = $cparams{'username'};
   unless ($username) {
-    $self->set_error("Client didn't provide a username");
+    $self->set_error('Client didn\'t provide a username');
     return $cb->();
   }
 
   # "The authzid MUST NOT be an empty string."
   if (exists $cparams{authzid} && $cparams{authzid} eq '') {
-      $self->set_error("authzid cannot be empty");
+      $self->set_error('authzid cannot be empty');
       return $cb->();
   }
   my $authzid = $cparams{authzid};
@@ -431,15 +438,15 @@ sub server_step {
   # This will detect accidental connection to the incorrect server, as well as
   # some redirection attacks"
   my $digest_uri = $cparams{'digest-uri'};
-  my ($cservice, $chost, $cservname) = split '/', $digest_uri, 3;
+  my ($cservice, $chost, $cservname) = split /\//, $digest_uri, 3;
   if ($cservice ne $self->service or $chost ne $self->host) {
       # XXX deal with serv_name
-      $self->set_error("Incorrect digest-uri");
-      return $cb->(); 
+      $self->set_error('Incorrect digest-uri');
+      return $cb->();
   }
 
   unless (defined $self->callback('getsecret')) {
-    $self->set_error("a getsecret callback MUST be defined");
+    $self->set_error('a getsecret callback MUST be defined');
     $cb->();
     return;
   }
@@ -447,31 +454,31 @@ sub server_step {
   my $realm = $self->{client_params}->{'realm'};
   my $response_check = sub {
     my $password = shift;
-    return $self->set_error("Cannot get the passord for $username") 
+    return $self->set_error("Cannot get the passord for $username")
         unless defined $password;
- 
+
     ## configure the security layer
     $self->_server_layer($qop)
-        or return $self->set_error("Cannot negociate the security layer");
- 
+        or return $self->set_error('Cannot negociate the security layer');
+
     my ($expected, $rspauth)
         = $self->_compute_digests_and_set_keys($password, $self->{client_params});
- 
+
     return $self->set_error("Incorrect response $self->{client_params}->{response} <> $expected")
         unless $expected eq $self->{client_params}->{response};
- 
+
     my %response = (
         rspauth => $rspauth,
     );
- 
+
     # I'm not entirely sure of what I am doing
     $self->{answer}{$_} = $self->{client_params}->{$_} for qw/username authzid realm serv/;
- 
+
     $self->set_success;
     return _response(\%response);
   };
 
-  $self->callback('getsecret')->(
+  return $self->callback('getsecret')->(
     $self,
     { user => $username, realm => $realm, authzid => $authzid },
     sub { $cb->( $response_check->( shift ) ) },
@@ -489,7 +496,7 @@ sub _response {
   my $is_client = shift;
 
   my @out;
-  for my $k (sort keys %$response) {
+  for my $k (sort keys %{$response}) {
     my $is_array = ref $response->{$k} && ref $response->{$k} eq 'ARRAY';
     my @values = $is_array ? @{$response->{$k}} : ($response->{$k});
     # Per spec, one way of doing it: multiple k=v
@@ -497,7 +504,7 @@ sub _response {
     # other way: comma separated list
     push @out, [$k, join (',', @values)];
   }
-  return join (",", map { _qdval($_->[0], $_->[1], $is_client) } @out);
+  return join (',', map { _qdval($_->[0], $_->[1], $is_client) } @out);
 }
 
 sub _parse_challenge {
@@ -506,13 +513,13 @@ sub _parse_challenge {
   my $type          = shift;
   my $params        = shift;
 
-  while($$challenge_ref =~
-           s/^(?:\s*,)*\s*            # remaining or crap
+  while(${$challenge_ref} =~
+           s{^(?:\s*,)*\s*            # remaining or crap
              ([\w-]+)                 # key, eg: qop
              =
              ("([^\\"]+|\\.)*"|[^,]+) # value, eg: auth-conf or "NoNcE"
              \s*(?:,\s*)*             # remaining
-           //x) {
+           }{}x) {
 
     my ($k, $v) = ($1,$2);
     if ($v =~ /^"(.*)"$/s) {
@@ -520,7 +527,7 @@ sub _parse_challenge {
     }
     if (exists $multi{$type}{$k}) {
       my $aref = $params->{$k} ||= [];
-      push @$aref, $v;
+      push @{$aref}, $v;
     }
     elsif (defined $params->{$k}) {
       return $self->set_error("Bad challenge: '$$challenge_ref'");
@@ -529,7 +536,7 @@ sub _parse_challenge {
       $params->{$k} = $v;
     }
   }
-  return length $$challenge_ref ? 0 : 1;
+  return length ${$challenge_ref} ? 0 : 1;
 }
 
 sub _qdval {
@@ -585,9 +592,9 @@ sub _client_layer {
   # qop in server challenge is optional: if not there "auth" is assumed
   my $smask = 0;
   map {
-    m/^auth$/      and $smask |= 1;
-    m/^auth-int$/  and $smask |= 2;
-    m/^auth-conf$/ and $smask |= 4;
+    m/^auth$/      and $smask |= 1; ## no critic (RegularExpressions::ProhibitFixedStringMatches)
+    m/^auth-int$/  and $smask |= 2; ## no critic (RegularExpressions::ProhibitFixedStringMatches)
+    m/^auth-conf$/ and $smask |= 4; ## no critic (RegularExpressions::ProhibitFixedStringMatches)
   } split(/,/, $sparams->{qop}||'auth'); # XXX I think we might have a bug here bc. of LWS
 
   # construct our qop mask
@@ -639,13 +646,13 @@ sub _select_cipher {
   # compose a subset of candidate ciphers based on ssf and peer list
   my @a = map {
     my $c = $_;
-    (grep { $c->{name} eq $_ } @$ciphers and
+    (grep { $c->{name} eq $_ } @{$ciphers} and
       $c->{ssf} >= $minssf and $c->{ssf} <= $maxssf) ? $_ : ()
   } @ourciphers;
 
   # from these, select the first one we can create an instance of
   for (@a) {
-    next unless eval "require $_->{pkg}";
+    next unless eval {require $_->{pkg}};
     $self->{cipher} = $_;
     return 1;
   }
@@ -718,14 +725,14 @@ sub _crypt {  # input: op(decrypting=1/encrypting=0)), buffer
 
   if ($bs <= 1) {
     # stream cipher
-    return $d ? $self->{khs}->decrypt($_[0]) : $self->{khc}->encrypt($_[0])
+    return $d ? $self->{khs}->decrypt($_[0]) : $self->{khc}->encrypt($_[0]);
   }
 
   # the remainder of this sub is for block ciphers
 
   # get current IV
   my $piv = \$self->{$d ? 'ivs' : 'ivc'};
-  my $iv = $$piv;
+  my $iv = ${$piv};
 
   my $result = join '', map {
     my $x = $d
@@ -736,7 +743,7 @@ sub _crypt {  # input: op(decrypting=1/encrypting=0)), buffer
   } unpack("a$bs "x(int(length($_[0])/$bs)), $_[0]);
 
   # store current IV
-  $$piv = $iv;
+  ${$piv} = $iv;
   return $result;
 }
 

@@ -1,17 +1,17 @@
 package BotLib::Drink;
 
-use 5.018;
+use 5.018; ## no critic (ProhibitImplicitImport)
 use strict;
 use warnings;
 use utf8;
 use open qw (:std :utf8);
 use English qw ( -no_match_vars );
 use Encode qw (decode);
-use CHI;
-use CHI::Driver::BerkeleyDB;
-use DateTime;
-use HTTP::Tiny;
-use HTML::TokeParser;
+use CHI ();
+use CHI::Driver::BerkeleyDB ();
+use DateTime ();
+use HTTP::Tiny ();
+use HTML::TokeParser ();
 use Log::Any qw ($log);
 use POSIX qw (strftime);
 use BotLib::Conf qw (LoadConf);

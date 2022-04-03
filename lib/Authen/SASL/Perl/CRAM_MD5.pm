@@ -1,14 +1,19 @@
+## no critic (ClassHierarchies::ProhibitExplicitISA, Documentation::RequirePodSections, Documentation::RequirePODUseEncodingUTF8)
 # Copyright (c) 2002 Graham Barr <gbarr@pobox.com>. All rights reserved.
 # This program is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
 
 package Authen::SASL::Perl::CRAM_MD5;
 
+use 5.018; ## no critic (ProhibitImplicitImport)
 use strict;
+use warnings;
+use utf8;
+
 use vars qw($VERSION @ISA);
 use Digest::HMAC_MD5 qw(hmac_md5_hex);
 
-$VERSION = "2.14";
+$VERSION = '2.14';
 @ISA	 = qw(Authen::SASL::Perl);
 
 my %secflags = (
@@ -16,16 +21,16 @@ my %secflags = (
 	noanonymous => 1,
 );
 
-sub _order { 2 }
+sub _order { return 2 }
 sub _secflags {
   shift;
-  scalar grep { $secflags{$_} } @_;
+  return scalar grep { $secflags{$_} } @_;
 }
 
-sub mechanism { 'CRAM-MD5' }
+sub mechanism { return 'CRAM-MD5' }
 
 sub client_start {
-  '';
+  return '';
 }
 
 sub client_step {
@@ -35,7 +40,7 @@ sub client_step {
     defined($v) ? $v : ''
   } qw(user pass);
 
-  $user . " " . hmac_md5_hex($string,$pass);
+  return $user . ' ' . hmac_md5_hex($string,$pass);
 }
 
 1;

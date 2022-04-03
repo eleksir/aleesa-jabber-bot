@@ -1,14 +1,19 @@
+## no critic (Variables::ProhibitPunctuationVars)
 # Copyright (c) 2004-2006 Graham Barr <gbarr@pobox.com>. All rights reserved.
 # This program is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
 
 package Authen::SASL;
 
+use 5.018; ## no critic (ProhibitImplicitImport)
 use strict;
-use vars qw($VERSION @Plugins);
-use Carp;
+use warnings;
+use utf8;
 
-$VERSION = "2.16";
+use vars qw($VERSION @Plugins); ## no critic (Variables::ProhibitPackageVars)
+use Carp qw (croak);
+
+$VERSION = '2.16';
 
 @Plugins = qw(
 	Authen::SASL::XS
@@ -21,9 +26,10 @@ sub import {
   shift;
   return unless @_;
 
-  local $SIG{__DIE__};
-  @Plugins = grep { /^[:\w]+$/ and eval "require $_" } map { /::/ ? $_ : "Authen::SASL::$_" } @_
-    or croak "no valid Authen::SASL plugins found";
+  local $SIG{__DIE__}; ## no critic (Variables::RequireInitializationForLocalVars)
+  @Plugins = grep { /^[:\w]+$/ and eval "require $_" } map { /::/ ? $_ : "Authen::SASL::$_" } @_ ## no critic (BuiltinFunctions::ProhibitStringyEval)
+    or croak 'no valid Authen::SASL plugins found';
+  return;
 }
 
 
@@ -44,13 +50,13 @@ sub new {
   $self->callback(pass => $opt{password}) if exists $opt{password};
   $self->callback(pass => $opt{response}) if exists $opt{response};
 
-  $self;
+  return $self;
 }
 
 
 sub mechanism {
   my $self = shift;
-  @_ ? $self->{mechanism} = shift
+  return @_ ? $self->{mechanism} = shift
      : $self->{mechanism};
 }
 
@@ -62,7 +68,7 @@ sub callback {
   my %new = @_;
   @{$self->{callback}}{keys %new} = values %new;
 
-  $self->{callback};
+  return $self->{callback};
 }
 
 # The list of packages should not really be hardcoded here
@@ -73,7 +79,7 @@ sub client_new { # $self, $service, $host, $secflags
 
   my $err;
   foreach my $pkg (@Plugins) {
-    if (eval "require $pkg" and $pkg->can("client_new")) {
+    if (eval "require $pkg" and $pkg->can('client_new')) { ## no critic (BuiltinFunctions::ProhibitStringyEval)
       if ($self->{conn} = eval { $pkg->client_new($self, @_) }) {
         return $self->{conn};
       }
@@ -81,7 +87,7 @@ sub client_new { # $self, $service, $host, $secflags
     }
   }
 
-  croak $err || "Cannot find a SASL Connection library";
+  croak $err || 'Cannot find a SASL Connection library';
 }
 
 sub server_new { # $self, $service, $host, $secflags
@@ -89,19 +95,19 @@ sub server_new { # $self, $service, $host, $secflags
 
   my $err;
   foreach my $pkg (@Plugins) {
-    if (eval "require $pkg" and $pkg->can("server_new")) {
+    if (eval "require $pkg" and $pkg->can('server_new')) { ## no critic (BuiltinFunctions::ProhibitStringyEval)
       if ($self->{conn} = eval { $pkg->server_new($self, @_) } ) {
         return $self->{conn};
       }
-      $err = $@;
+      $err = $@; ## no critic (Variables::ProhibitPunctuationVars)
     }
   }
-  croak $err || "Cannot find a SASL Connection library for server-side authentication";
+  croak $err || 'Cannot find a SASL Connection library for server-side authentication';
 }
 
 sub error {
   my $self = shift;
-  $self->{conn} && $self->{conn}->error;
+  return $self->{conn} && $self->{conn}->error;
 }
 
 # Compat.
@@ -109,22 +115,22 @@ sub user {
   my $self = shift;
   my $user = $self->{callback}{user};
   $self->{callback}{user} = shift if @_;
-  $user;
+  return $user;
 }
 
 sub challenge {
   my $self = shift;
-  $self->{conn}->client_step(@_);
+  return $self->{conn}->client_step(@_);
 }
 
 sub initial {
   my $self = shift;
-  $self->client_new($self)->client_start;
+  return $self->client_new($self)->client_start;
 }
 
 sub name {
   my $self = shift;
-  $self->{conn} ? $self->{conn}->mechanism : ($self->{mechanism} =~ /(\S+)/)[0];
+  return $self->{conn} ? $self->{conn}->mechanism : ($self->{mechanism} =~ /(\S+)/)[0];
 }
 
 1;

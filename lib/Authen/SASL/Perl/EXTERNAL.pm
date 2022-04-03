@@ -1,3 +1,4 @@
+## no critic (ClassHierarchies::ProhibitExplicitISA, Documentation::RequirePodSections, Documentation::RequirePODUseEncodingUTF8)
 # Copyright (c) 1998-2002 Graham Barr <gbarr@pobox.com> and 2001 Chris Ridd
 # <chris.ridd@isode.com>.  All rights reserved.  This program
 # is free software; you can redistribute it and/or modify it under the
@@ -5,10 +6,14 @@
 
 package Authen::SASL::Perl::EXTERNAL;
 
+use 5.018; ## no critic (ProhibitImplicitImport)
 use strict;
+use warnings;
+use utf8;
+
 use vars qw($VERSION @ISA);
 
-$VERSION = "2.14";
+$VERSION = '2.14';
 @ISA	 = qw(Authen::SASL::Perl);
 
 my %secflags = (
@@ -17,18 +22,18 @@ my %secflags = (
 	noanonymous  => 1,
 );
 
-sub _order { 2 }
+sub _order { return 2 }
 sub _secflags {
   shift;
-  grep { $secflags{$_} } @_;
+  return grep { $secflags{$_} } @_;
 }
 
-sub mechanism { 'EXTERNAL' }
+sub mechanism { return 'EXTERNAL' }
 
 sub client_start {
   my $self = shift;
   my $v = $self->_call('user');
-  defined($v) ? $v : ''
+  return defined($v) ? $v : '';
 }
 
 #sub client_step {

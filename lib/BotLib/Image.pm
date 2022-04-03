@@ -1,6 +1,6 @@
 package BotLib::Image;
 
-use 5.018;
+use 5.018;  ## no critic (ProhibitImplicitImport)
 use strict;
 use warnings;
 use utf8;

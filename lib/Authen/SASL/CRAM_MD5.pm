@@ -4,14 +4,20 @@
 
 package Authen::SASL::CRAM_MD5;
 
+use 5.018; ## no critic (ProhibitImplicitImport)
+use warnings;
 use strict;
+use utf8;
+
 use vars qw($VERSION);
 
-$VERSION = "2.14";
+$VERSION = '2.14';
+
+use Authen::SASL ();
 
 sub new {
   shift;
-  Authen::SASL->new(@_, mechanism => 'CRAM-MD5');
+  return Authen::SASL->new(@_, mechanism => 'CRAM-MD5');
 }
 
 1;

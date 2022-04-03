@@ -3,7 +3,7 @@
 # в vendor_perl/5.24.3/Authen/SASL/Perl/DIGEST_MD5.pm
 package JabberBot;
 
-use 5.018;
+use 5.018; ## no critic (ProhibitImplicitImport)
 use strict;
 use warnings;
 use utf8;
@@ -93,9 +93,9 @@ sub __new_bot_message {
 		$reply = 'Чего тебе?';
 	} elsif (($text =~ /^$qname[\,|\:]? (.+)/u) && ($hash{type} eq 'groupchat')) {
 		$reply = $hailo->{$chatid}->learn_reply ($1);
-	} elsif ($text =~ /^=\($/u || $text =~ /^\:\($/u || $text eq /^\)\:$/u) {
+	} elsif ($text =~ /^\=\($/u || $text =~ /^\:\($/u || $text eq /^\)\:$/u) {
 		$reply = ':)';
-	} elsif ($text =~ /^=\)$/u || $text =~ /^\:\)$/u || $text =~ /^\(\:$/u) {
+	} elsif ($text =~ /^\=\)$/u || $text =~ /^\:\)$/u || $text =~ /^\(\:$/u) {
 		$reply = ':D';
 	# karma adjustment
 	} elsif ($text =~ /(\+\+|\-\-)$/) {

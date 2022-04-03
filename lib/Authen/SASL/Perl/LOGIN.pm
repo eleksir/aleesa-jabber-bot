@@ -1,31 +1,36 @@
+## no critic (ClassHierarchies::ProhibitExplicitISA, Documentation::RequirePODUseEncodingUTF8, Documentation::RequirePodSections)
 # Copyright (c) 2002 Graham Barr <gbarr@pobox.com>. All rights reserved.
 # This program is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
 
 package Authen::SASL::Perl::LOGIN;
 
+use 5.018; ## no critic (ProhibitImplicitImport)
 use strict;
+use warnings;
+use utf8;
+
 use vars qw($VERSION @ISA);
 
-$VERSION = "2.14";
+$VERSION = '2.14';
 @ISA	 = qw(Authen::SASL::Perl);
 
 my %secflags = (
 	noanonymous => 1,
 );
 
-sub _order { 1 }
+sub _order { return 1 }
 sub _secflags {
   shift;
-  scalar grep { $secflags{$_} } @_;
+  return scalar grep { $secflags{$_} } @_;
 }
 
-sub mechanism { 'LOGIN' }
+sub mechanism { return 'LOGIN' }
 
 sub client_start {
   my $self = shift;
   $self->{stage} = 0;
-  '';
+  return '';
 }
 
 sub client_step {
@@ -47,7 +52,7 @@ sub client_step {
       return;
   }
   else {
-      return $self->set_error("Invalid sequence");
+      return $self->set_error('Invalid sequence');
   }
 }
 
@@ -73,24 +78,24 @@ sub server_step {
 
   if ($stage == 1) {
     unless (defined $response) {
-        $self->set_error("Invalid sequence (empty username)");
+        $self->set_error('Invalid sequence (empty username)');
         return $user_cb->();
     }
     $self->{answer}{user} = $response;
-    return $user_cb->("Password:");
+    return $user_cb->('Password:');
   }
   elsif ($stage == 2) {
     unless (defined $response) {
-        $self->set_error("Invalid sequence (empty pass)");
+        $self->set_error('Invalid sequence (empty pass)');
         return $user_cb->();
     }
     $self->{answer}{pass} = $response;
   }
   else {
-    $self->set_error("Invalid sequence (end)");
+    $self->set_error('Invalid sequence (end)');
     return $user_cb->();
   }
-  my $error = "Credentials don't match";
+  my $error = 'Credentials don\'t match';
   my $answers = { user => $self->{answer}{user}, pass => $self->{answer}{pass} };
   if (my $checkpass = $self->{callback}{checkpass}) {
     my $cb = sub {
@@ -109,7 +114,7 @@ sub server_step {
   elsif (my $getsecret = $self->{callback}{getsecret}) {
     my $cb = sub {
       my $good_pass = shift;
-      if ($good_pass && $good_pass eq ($self->{answer}{pass} || "")) {
+      if ($good_pass && $good_pass eq ($self->{answer}{pass} || '')) {
         $self->set_success;
       }
       else {

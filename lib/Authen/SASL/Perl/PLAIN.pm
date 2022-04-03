@@ -1,14 +1,19 @@
+## no critic (Documentation::RequirePODUseEncodingUTF8, Documentation::RequirePodSections)
 # Copyright (c) 2002 Graham Barr <gbarr@pobox.com>. All rights reserved.
 # This program is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
 
 package Authen::SASL::Perl::PLAIN;
 
+use 5.018; ## no critic (ProhibitImplicitImport)
 use strict;
+use warnings;
+use utf8;
+
 use vars qw($VERSION @ISA);
 
-$VERSION = "2.14";
-@ISA	 = qw(Authen::SASL::Perl);
+$VERSION = '2.14';
+@ISA	 = qw(Authen::SASL::Perl); ## no critic (ClassHierarchies::ProhibitExplicitISA)
 
 my %secflags = (
 	noanonymous => 1,
@@ -16,13 +21,13 @@ my %secflags = (
 
 my @tokens = qw(authname user pass);
 
-sub _order { 1 }
+sub _order { return 1 }
 sub _secflags {
   shift;
-  grep { $secflags{$_} } @_;
+  return grep { $secflags{$_} } @_;
 }
 
-sub mechanism { 'PLAIN' }
+sub mechanism { return 'PLAIN' }
 
 sub client_start {
   my $self = shift;
@@ -35,7 +40,7 @@ sub client_start {
     defined($v) ? $v : ''
   } @tokens;
 
-  join("\0", @parts);
+  return join("\0", @parts);
 }
 
 sub server_start {
@@ -44,16 +49,16 @@ sub server_start {
   my $user_cb   = shift || sub {};
 
   $self->{error} = undef;
-  return $self->set_error("No response: Credentials don't match")
+  return $self->set_error('No response: Credentials don\'t match')
     unless defined $response;
 
   my %parts;
-  @parts{@tokens} = split "\0", $response, scalar @tokens;
+  @parts{@tokens} = split "\0", $response, scalar @tokens; ## no critic (BuiltinFunctions::ProhibitStringySplit)
 
 
   # I'm not entirely sure of what I am doing
   $self->{answer}{$_} = $parts{$_} for qw/authname user/;
-  my $error = "Credentials don't match";
+  my $error = 'Credentials don\'t match';
 
   ## checkpass
   if (my $checkpass = $self->callback('checkpass')) {
@@ -75,7 +80,7 @@ sub server_start {
   elsif (my $getsecret = $self->callback('getsecret')) {
     my $cb = sub {
       my $good_pass = shift;
-      if ($good_pass && $good_pass eq ($parts{pass} || "")) {
+      if ($good_pass && $good_pass eq ($parts{pass} || '')) {
         $self->set_success;
       }
       else {
@@ -92,6 +97,8 @@ sub server_start {
     $self->set_error($error);
     $user_cb->();
   }
+
+  return;
 }
 
 1;

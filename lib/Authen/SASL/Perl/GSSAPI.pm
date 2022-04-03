@@ -1,15 +1,21 @@
+## no critic (ClassHierarchies::ProhibitExplicitISA, Documentation::RequirePodSections, Documentation::RequirePODUseEncodingUTF8)
 # Copyright (c) 2006 Simon Wilkinson
 # All rights reserved. This program is free software; you can redistribute
 # it and/or modify it under the same terms as Perl itself.
 
 package Authen::SASL::Perl::GSSAPI;
 
+use 5.018; ## no critic (ProhibitImplicitImport)
 use strict;
+use warnings;
+use utf8;
 
 use vars qw($VERSION @ISA);
-use GSSAPI;
+use GSSAPI ();
+use GSSAPI::Name ();
+use GSSAPI::Context ();
 
-$VERSION= "0.05";
+$VERSION= '0.05';
 @ISA = qw(Authen::SASL::Perl);
 
 my %secflags = (
@@ -17,13 +23,13 @@ my %secflags = (
   noanonymous => 1,
 );
 
-sub _order { 4 }
+sub _order { return 4 }
 sub _secflags {
   shift;
-  scalar grep { $secflags{$_} } @_;
+  return scalar grep { $secflags{$_} } @_;
 }
 
-sub mechanism { 'GSSAPI' }
+sub mechanism { return 'GSSAPI' }
 
 sub _init {
   my ($pkg, $self) = @_;
@@ -38,7 +44,7 @@ sub _init {
   # layer selection mask in the client reply, we default to
   # compatibility with that bug
   $self->property('COMPAT_CYRUSLIB_REPLY_MASK_BUG', 1);
-  $self;
+  return $self;
 }
 
 sub client_start {

@@ -1,7 +1,7 @@
 package BotLib::Friday;
 # for friday data stolen from https://raw.githubusercontent.com/isida/vi/master/data/friday.txt
 
-use 5.018;
+use 5.018; ## no critic (ProhibitImplicitImport)
 use strict;
 use warnings;
 use utf8;
@@ -11,7 +11,7 @@ use Carp qw (croak);
 use File::Path qw (make_path);
 use Log::Any qw ($log);
 use Math::Random::Secure qw (irand);
-use SQLite_File;
+use SQLite_File ();
 use BotLib::Conf qw (LoadConf);
 
 use version; our $VERSION = qw (1.0);
