@@ -93,12 +93,8 @@ sub __new_bot_message {
 		$reply = 'Чего тебе?';
 	} elsif (($text =~ /^$qname[\,|\:]? (.+)/u) && ($hash{type} eq 'groupchat')) {
 		$reply = $hailo->{$chatid}->learn_reply ($1);
-	} elsif ($text =~ /^\=\($/u || $text =~ /^\:\($/u || $text eq /^\)\:$/u) {
-		$reply = ':)';
-	} elsif ($text =~ /^\=\)$/u || $text =~ /^\:\)$/u || $text =~ /^\(\:$/u) {
-		$reply = ':D';
 	# karma adjustment
-	} elsif ($text =~ /(\+\+|\-\-)$/) {
+	} elsif ($text =~ /(\+\+|\-\-)$/u) {
 		my @arr = split /\n/, $text;
 
 		if ($#arr < 1) {
@@ -118,12 +114,38 @@ sub __new_bot_message {
 		$reply = Command (%hash);
 	# just message in chat
 	} else {
-		# in groupchat we answer only to phrases that mention us
-		if ($hash{type} eq 'groupchat') {
-			$hailo->{$chatid}->learn ($text);
-		# in tet-a-tet chat we must always answer, if possible
-		} elsif ($hash{'type'} eq 'chat') {
-			$reply = $hailo->{$chatid}->learn_reply ($text);
+		my @smiles = ('=(', ':(', '):');
+		my $done = 0;
+
+		while (my $smile = pop @smiles) {
+			if ($text eq $smile) {
+				$reply = ':)';
+				$done = 1;
+				last;
+			}
+		}
+
+		unless ($done) {
+			$#smiles = -1;
+			@smiles = ('=)', ':)', '(:');
+
+			while (my $smile = pop @smiles) {
+				if ($text eq $smile) {
+					$reply = ':D';
+					$done = 1;
+					last;
+				}
+			}
+		}
+
+		unless ($done) {
+			# in groupchat we answer only to phrases that mention us
+			if ($hash{type} eq 'groupchat') {
+				$hailo->{$chatid}->learn ($text);
+			# in tet-a-tet chat we must always answer, if possible
+			} elsif ($hash{'type'} eq 'chat') {
+				$reply = $hailo->{$chatid}->learn_reply ($text);
+			}
 		}
 	}
 
