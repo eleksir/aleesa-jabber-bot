@@ -27,7 +27,7 @@ sub Drink {
 	my $drinkCallBack = sub {
 		my $ret;
 		my ($dayNum, $monthNum) = (localtime ())[3, 4];
-		my $url = sprintf 'https://kakoysegodnyaprazdnik.ru/baza/%s/%s', $MONTH[$monthNum], $dayNum;
+		my $url = 'https://prazdniki-segodnya.ru/';
 		my $r;
 
 		for (1..3) {
@@ -42,28 +42,32 @@ sub Drink {
 		}
 
 		if ($r->{success}) {
-			# TODO: Handle unexpected content
 			my $p = HTML::TokeParser->new (\$r->{content});
 			my @a;
-			my @holiday;
+			my %holiday;
 
 			do {
 				$#a = -1;
-				@a = $p->get_tag ('span'); ## no critic (Variables::RequireLocalizedPunctuationVars)
+				@a = $p->get_tag ('div'); ## no critic (Variables::RequireLocalizedPunctuationVars)
 
-				if ($#{$a[0]} > 2 && defined $a[0][1]->{itemprop} && $a[0][1]->{itemprop} eq 'text') {
-					push @holiday,'* ' . decode ('UTF-8', $p->get_trimmed_text ('/span'));
+				if ($#{$a[0]} > 2) {
+					my @shitty_array = $a[0];
+					foreach my $item (@shitty_array) {
+						if (ref $item) {
+							foreach my $item1 (@{$item}) {
+								my %h = eval { %{$item1} };
+
+								if (defined ($h{class}) && $h{class} eq 'list-group-item text-monospace') {
+									$holiday {'* ' . decode ('UTF-8', $p->get_trimmed_text ('/div'))} = 1;
+								}
+							}
+						}
+					}
 				}
-
 			} while ($#{$a[0]} > 1);
 
-			if ($#holiday > 0) {
-				# cut off something weird, definely not a "holyday"
-				$#holiday = $#holiday - 1;
-			}
-
-			if ($#holiday > 0) {
-				$ret = join "\n", @holiday;
+			if (int (keys %holiday) > 0) {
+				$ret = join "\n", sort (keys %holiday);
 			}
 		} else {
 			$log->warn (sprintf '[WARN] Server return status %s with message: %s', $r->{status}, $r->{reason});
